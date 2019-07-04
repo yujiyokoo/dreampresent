@@ -25,14 +25,15 @@ KOS_INIT_ROMDISK(romdisk);
 extern const uint8_t dreampresent[]; // declared in the rb file
 
 int main(int argc, char **argv) {
-    vid_set_mode(DM_800x608_VGA_MB, PM_RGB565); // or DM_768x576_PAL_IL ?
+    vid_set_mode(DM_640x480_VGA, PM_RGB565);
+    //vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565);
 
     mrb_state *mrb = mrb_open();
     if (!mrb) { return 1; }
 
-    struct RClass *dc2d_module = mrb_define_module(mrb, "Dc2d");
+    struct RClass *dc_kos = mrb_define_module(mrb, "DcKos");
 
-    define_module_functions(mrb, dc2d_module);
+    define_module_functions(mrb, dc_kos);
 
     mrb_load_irep(mrb, dreampresent);
 
