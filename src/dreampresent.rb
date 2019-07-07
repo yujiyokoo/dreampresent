@@ -7,10 +7,7 @@ class Dreampresent
   end
 
   def start
-    puts "in start"
-    file_content = @dc_kos.read_whole_txt_file "/rd/foobar.txt"
-    puts "before draw str"
-    @dc_kos.draw_str file_content
-    puts "started"
+    puts "Dreampresent: starting"
+    Presentation.new(@dc_kos).run
   end
 end
