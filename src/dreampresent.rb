@@ -4,6 +4,7 @@ class Dreampresent
   def initialize(screen, dc_kos)
     @screen = screen
     @dc_kos = dc_kos
+    @dc_kos.pvr_initialise
   end
 
   def start

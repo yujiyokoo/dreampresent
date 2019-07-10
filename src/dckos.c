@@ -1,12 +1,17 @@
+#include <assert.h>
 #include <kos.h>
+#include <kos/img.h>
 #include <mruby.h>
 #include <mruby/data.h>
 #include <mruby/string.h>
 #include <mruby/error.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <png/png.h>
 
-#define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  )
+// Convert 3 8bits to RGB555... what about r? 0 or 1? 1<<15?
+#define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 7) | ((g & 0x7C) << 3) | (b >> 3)  )
+#define CONV1555TO565(colour) ( (((colour) & 0x7C00) << 1) | (((colour) & 0x03E0) << 1) | ((colour) & 0x001F) )
 
 // Be careful with this function. It'll attempt to read the entire file.
 static mrb_value read_whole_txt_file(mrb_state* mrb, mrb_value self) {
@@ -74,6 +79,111 @@ static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
+// This shows 1/4 of image?
+// TODO colours are wrong after changing from PM_RGB565 to PM_RGB555
+mrb_value load_bg_png(mrb_state* mrb, mrb_value self) {
+  pvr_ptr_t texture;
+  pvr_poly_cxt_t cxt;
+  pvr_poly_hdr_t hdr;
+  pvr_vertex_t vert;
+
+  mrb_value png_path;
+  char* c_png_path;
+
+  mrb_get_args(mrb, "S", &png_path);
+  c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this
+
+  pvr_wait_ready();
+  pvr_scene_begin();
+
+  pvr_list_begin(PVR_LIST_OP_POLY);
+
+  texture = pvr_mem_malloc(512 * 512 * 2);
+  png_to_texture(c_png_path, texture, PNG_NO_ALPHA);
+
+  pvr_poly_cxt_txr(&cxt, PVR_LIST_OP_POLY, PVR_TXRFMT_RGB565, 512, 512, texture, PVR_FILTER_BILINEAR);
+  pvr_poly_compile(&hdr, &cxt);
+  pvr_prim(&hdr, sizeof(hdr));
+
+  vert.argb = PVR_PACK_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
+  vert.oargb = 0;
+  vert.flags = PVR_CMD_VERTEX;
+
+  vert.x = 1;
+  vert.y = 1;
+  vert.z = 1;
+  vert.u = 0.0;
+  vert.v = 0.0;
+  pvr_prim(&vert, sizeof(vert));
+
+  vert.x = 640;
+  vert.y = 1;
+  vert.z = 1;
+  vert.u = 1.0;
+  vert.v = 0.0;
+  pvr_prim(&vert, sizeof(vert));
+
+  vert.x = 1;
+  vert.y = 480;
+  vert.z = 1;
+  vert.u = 0.0;
+  vert.v = 1.0;
+  pvr_prim(&vert, sizeof(vert));
+
+  vert.x = 640;
+  vert.y = 480;
+  vert.z = 1;
+  vert.u = 1.0;
+  vert.v = 1.0;
+  vert.flags = PVR_CMD_VERTEX_EOL;
+  pvr_prim(&vert, sizeof(vert));
+
+  pvr_list_finish();
+  pvr_scene_finish();
+
+  pvr_mem_free(texture);
+
+  return mrb_nil_value();
+}
+
+mrb_value test_png(mrb_state* mrb, mrb_value self) {
+  mrb_value png_path;
+  mrb_int base_x, base_y;
+  char* c_png_path;
+  kos_img_t img;
+
+  mrb_get_args(mrb, "Sii", &png_path, &base_x, &base_y);
+  c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this?
+  printf("---- got path: %s \n", c_png_path);
+
+  png_to_img(c_png_path, 1, &img);
+
+  printf("---- KOS_IMG_FMT_I %lu, KOS_IMG_FMT_D %lu\n", KOS_IMG_FMT_I(img.fmt), KOS_IMG_FMT_D(img.fmt));
+
+  assert( KOS_IMG_FMT_I(img.fmt) == KOS_IMG_FMT_ARGB1555 );
+  int x = 0;
+  int y = 0;
+
+  uint16_t* uint16_data = (uint16_t*)(img.data);
+
+  for(y = 0 ; y < img.h ; y++) {
+    for(x = 0 ; x < img.w ; x++) {
+      // TODO clip/skip out of bounds
+      vram_s[(base_y + y) * 640 + (base_x + x)] = CONV1555TO565(uint16_data[(y) * img.w + (x)]);
+    }
+  }
+
+  kos_img_free(&img, 0);
+
+  return mrb_nil_value();
+}
+
+static mrb_value pvr_intialise(mrb_state* mrb, mrb_value self) {
+  pvr_init_defaults();
+
+  return mrb_nil_value();
+}
+
 void print_exception(mrb_state* mrb) {
   if(mrb->exc) {
     mrb_value backtrace = mrb_get_backtrace(mrb);
@@ -88,6 +198,9 @@ void print_exception(mrb_state* mrb) {
 void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "load_bg_png", load_bg_png, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "test_png", test_png, MRB_ARGS_REQ(3));
+  mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
 }
