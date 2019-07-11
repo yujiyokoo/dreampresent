@@ -9,8 +9,7 @@
 #include <inttypes.h>
 #include <png/png.h>
 
-// Convert 3 8bits to RGB555... what about r? 0 or 1? 1<<15?
-#define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 7) | ((g & 0x7C) << 3) | (b >> 3)  )
+// Convert ARGB1555 to RGB565 - drops the A bit and G is exapanded to 6 bits
 #define CONV1555TO565(colour) ( (((colour) & 0x7C00) << 1) | (((colour) & 0x03E0) << 1) | ((colour) & 0x001F) )
 
 // Be careful with this function. It'll attempt to read the entire file.
