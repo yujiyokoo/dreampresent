@@ -1,11 +1,7 @@
 class Page
-  def initialize(dc_kos)
+  def initialize(page_data, dc_kos)
+    @page_data = page_data
     @dc_kos = dc_kos
-  end
-
-  def load
-    puts "loading text and images..."
-    self
   end
 
   def render
@@ -14,15 +10,18 @@ class Page
     #@dc_kos.load_bg_png("/rd/test_image_512x512.png")
     #puts "done load png"
 
-    @dc_kos.test_png("/rd/Dreamcast.png", 100, 100)
-    @dc_kos.draw_str("Hello")
+    @page_data.render(@dc_kos)
+    #@dc_kos.test_png("/rd/Dreamcast.png", 100, 100)
+    #@dc_kos.draw_str("Hello")
   end
 end
 
 class Presentation
-  def initialize(dc_kos)
+  def initialize(dc_kos, page_data)
     @dc_kos = dc_kos
-    @pages = [Page.new(@dc_kos)]
+    @pages = page_data.map do |pd|
+      Page.new(pd, @dc_kos)
+    end
   end
 
   def wait_for_next_page_button
@@ -36,12 +35,12 @@ class Presentation
   end
 
   def run
-    @dc_kos.load_bg_png("/rd/test_image_512x512.png")
-      wait_for_next_page_button
-    @dc_kos.test_png("/rd/test_image.png", 0, 0)
-      wait_for_next_page_button
+   # @dc_kos.load_bg_png("/rd/test_image_512x512.png")
+   #   wait_for_next_page_button
+   # @dc_kos.test_png("/rd/test_image.png", 0, 0)
+   #   wait_for_next_page_button
     @pages.each { |page|
-      page.load.render
+      page.render
       wait_for_next_page_button
     }
   end
