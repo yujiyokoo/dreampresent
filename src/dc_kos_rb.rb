@@ -12,27 +12,19 @@ class DcKosRb
     }
   end
 
-  def pvr_initialise(*args)
-    @dc_kos.pvr_initialise(*args)
+  def respond_to?(method)
+    if method == :respond_to?
+      true
+    else
+      self.respond_to?(method) || @dc_kos.respond_to?(method)
+    end
   end
 
-  def test_png(*args)
-    @dc_kos.test_png(*args)
-  end
-
-  def load_bg_png(*args)
-    @dc_kos.load_bg_png(*args)
-  end
-
-  def console_print(*args)
-    @dc_kos.console_print(*args)
-  end
-
-  def get_button_state(*args)
-    @dc_kos.get_button_state(*args)
-  end
-
-  def btn_start?(*args)
-    @dc_kos.btn_start?(*args)
+  def method_missing(method, *args, &block)
+    if @dc_kos.respond_to?(method)
+      @dc_kos.send(method, *args, &block)
+    else
+      fail NoMethodError, "undefined method '#{method}'"
+    end
   end
 end
