@@ -3,7 +3,7 @@ TARGET = dreampresent.elf
 OBJS = src/dreampresent.o src/main.o romdisk.o src/dckos.o
 
 # order here is important!
-MRB_SOURCES = src/page_data.rb src/presentation.rb src/dreampresent.rb src/screen.rb src/start.rb
+MRB_SOURCES = src/dc_kos_rb.rb src/page_data.rb src/presentation.rb src/dreampresent.rb src/screen.rb src/start.rb
 
 MRB_BYTECODE = src/dreampresent.c
 

@@ -22,8 +22,7 @@ PageClasses.push (Class.new(BasePage) do
     dc_kos.test_png("/rd/test_image.png", 0, 0) # alternative bg
     dc_kos.console_print("----------------")
     dc_kos.draw_str("About me (Yuji)", 60, 30 )
-    dc_kos.draw_str("Yuji Yokoo - Software developer", 60, 60 )
-    dc_kos.draw_str("15 years ago: Win32/MFC Desktop application developer", 60, 80 )
+    dc_kos.draw_str("Yuji Yokoo - Software developer\n15 years ago: Win32/MFC Desktop application developer", 60, 60 )
     dc_kos.draw_str("Likes: Ruby, Console games", 60, 120 )
   end
 end).new
