@@ -69,16 +69,28 @@ static mrb_value btn_start(mrb_state* mrb, mrb_value self) {
 static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   char* unwrapped_content;
   mrb_value str_content;
+  mrb_int x, y;
 
-  mrb_get_args(mrb, "S", &str_content);
+  mrb_get_args(mrb, "Sii", &str_content, &x, &y);
   unwrapped_content = mrb_str_to_cstr(mrb, str_content); // no need to free this
+  printf("%s\n", unwrapped_content);
 
-  bfont_draw_str(vram_s, 640, 0, unwrapped_content);
+  bfont_draw_str(vram_s + x + (y * 640), 640, 0, unwrapped_content);
 
   return mrb_nil_value();
 }
 
-// This shows 1/4 of image?
+static mrb_value console_print(mrb_state* mrb, mrb_value self) {
+  char* unwrapped_content;
+  mrb_value str_content;
+
+  mrb_get_args(mrb, "S", &str_content);
+  unwrapped_content = mrb_str_to_cstr(mrb, str_content); // no need to free this
+  printf("%s\n", unwrapped_content);
+
+  return mrb_nil_value();
+}
+
 // TODO colours are wrong after changing from PM_RGB565 to PM_RGB555
 mrb_value load_bg_png(mrb_state* mrb, mrb_value self) {
   pvr_ptr_t texture;
@@ -196,10 +208,12 @@ void print_exception(mrb_state* mrb) {
 
 void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "load_bg_png", load_bg_png, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "test_png", test_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
+
 }
