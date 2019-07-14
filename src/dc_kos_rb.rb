@@ -12,6 +12,11 @@ class DcKosRb
     }
   end
 
+  # this is for 512x512 images
+  def load_fullscreen_png(filepath)
+    load_png(filepath, 1, 1, 640, 640)
+  end
+
   def respond_to?(method)
     if method == :respond_to?
       true

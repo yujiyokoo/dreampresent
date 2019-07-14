@@ -1,6 +1,6 @@
 class BasePage
   def render_bg(dc_kos)
-    dc_kos.load_bg_png("/rd/test_image_512x512.png")
+    dc_kos.load_fullscreen_png("/rd/test_image_512x512.png")
   end
 end
 

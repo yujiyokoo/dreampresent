@@ -164,18 +164,6 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-mrb_value load_bg_png(mrb_state* mrb, mrb_value self) {
-  mrb_value png_path;
-  char* c_png_path;
-
-  mrb_get_args(mrb, "S", &png_path);
-  c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this
-
-  display_png_file(c_png_path, 1, 1, 640, 480);
-
-  return mrb_nil_value();
-}
-
 // this renders to vram_s
 mrb_value test_png(mrb_state* mrb, mrb_value self) {
   mrb_value png_path;
@@ -229,7 +217,6 @@ void print_exception(mrb_state* mrb) {
 void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(3));
-  mrb_define_module_function(mrb, module, "load_bg_png", load_bg_png, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, module, "test_png", test_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
