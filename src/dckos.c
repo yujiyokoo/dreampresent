@@ -91,7 +91,7 @@ static mrb_value console_print(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-void display_png_file(char* file_path, int x1, int y1, int x2, int y2) {
+void _display_png_file(char* file_path, int x1, int y1, int x2, int y2) {
   pvr_ptr_t texture;
   pvr_poly_cxt_t cxt;
   pvr_poly_hdr_t hdr;
@@ -159,7 +159,7 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
   mrb_get_args(mrb, "Siiii", &png_path, &x1, &y1, &x2, &y2);
   c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this
 
-  display_png_file(c_png_path, x1, y1, x2, y2);
+  _display_png_file(c_png_path, x1, y1, x2, y2);
 
   return mrb_nil_value();
 }
