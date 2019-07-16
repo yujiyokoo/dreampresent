@@ -165,7 +165,7 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
 }
 
 // this renders to vram_s
-mrb_value test_png(mrb_state* mrb, mrb_value self) {
+mrb_value render_png(mrb_state* mrb, mrb_value self) {
   mrb_value png_path;
   mrb_int base_x, base_y;
   char* c_png_path;
@@ -218,7 +218,7 @@ void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
-  mrb_define_module_function(mrb, module, "test_png", test_png, MRB_ARGS_REQ(3));
+  mrb_define_module_function(mrb, module, "render_png", render_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
