@@ -70,6 +70,14 @@ static mrb_value btn_a(mrb_state* mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_A);
 };
 
+static mrb_value btn_b(mrb_state* mrb, mrb_value self) {
+  return check_btn(mrb, self, CONT_B);
+};
+
+static mrb_value dpad_down(mrb_state* mrb, mrb_value self) {
+  return check_btn(mrb, self, CONT_DPAD_DOWN);
+};
+
 static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   char* unwrapped_content;
   mrb_value str_content;
@@ -227,6 +235,8 @@ void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "btn_b?", btn_b, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "dpad_down?", dpad_down, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
 
 }
