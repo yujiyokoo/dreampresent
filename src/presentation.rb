@@ -12,7 +12,7 @@ class Presentation
       rand(1) # hopefully this would give us a "more random" start point
       button_state = @dc_kos::get_button_state
 
-      break if @dc_kos::btn_start?(button_state)
+      break if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
     end
   end
 
