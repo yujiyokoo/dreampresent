@@ -4,13 +4,18 @@ class BasePage
   end
 end
 
-class PageTitle
+class ResultConstants
+  OK = 0
+end
+
+class PageTitleContent
   def initialize(content)
     @content = content
   end
 
   def render(dc_kos)
     dc_kos.draw_str(@content, 10, 2)
+    ResultConstants::OK
   end
 end
 
@@ -23,6 +28,7 @@ class TextContent
 
   def render(dc_kos)
     dc_kos.draw_str(@content, @x, @y)
+    ResultConstants::OK
   end
 end
 
@@ -35,11 +41,12 @@ class ImageContent
 
   def render(dc_kos)
     dc_kos.render_png(@path, @x, @y)
+    ResultConstants::OK
   end
 end
 
 # This only works as a 'background' with 640x480 image
-class BackgroundImage
+class BgImageContent
   def initialize(path)
     @path = String(path).strip
     puts "-------- Background. path is: "
@@ -51,6 +58,20 @@ class BackgroundImage
       dc_kos.render_png(@path, 0, 0)
     else
       puts "Rendering background image with no path. Skipping."
+    end
+    ResultConstants::OK
+  end
+end
+
+# Wait for A or Start in page to go to next section
+class WaitButtonContent
+  def render(dc_kos)
+    key_input = dc_kos.next_or_back
+
+    if key_input == dc_kos.class::NEXT_PAGE
+      ResultConstants::OK
+    else
+      key_input
     end
   end
 end
@@ -79,7 +100,15 @@ class Page
   def render(dc_kos)
     puts "------ about to call each on @sections"
     p @sections
-    @sections.each { |s| s.render(dc_kos) }
+    @sections.each { |s|
+      render_result = s.render(dc_kos)
+      puts "-------- section render result: #{ render_result }"
+
+      # return if user pressed PREV, QUIT, etc.
+      return render_result unless [dc_kos.class::NEXT_PAGE, ResultConstants::OK].include?(render_result)
+    }
+
+    return dc_kos.class::NEXT_PAGE
   end
 end
 
@@ -101,14 +130,14 @@ class Parser
   def parse(input_str)
     pages = input_str.split("\n=")
 
-    last_background = [BackgroundImage.new(nil)]
+    last_background = [BgImageContent.new(nil)]
 
     page_objs = pages.map { |page|
       parsed_page = page.split("\n-").each_with_index.map { |section, idx|
         case
         when idx == 0
           title = section.sub('=', '').strip # remove the first '='
-          PageTitle.new(title)
+          PageTitleContent.new(title)
         when section.slice(0,3) == 'txt'
           x, y, text_content = parse_line_xy(section)
           TextContent.new(x, y, text_content)
@@ -117,14 +146,16 @@ class Parser
           ImageContent.new(x, y, image_path)
         when section.slice(0,3) == 'bkg'
           bg_path = parse_line_no_xy(section)
-          BackgroundImage.new(bg_path)
+          BgImageContent.new(bg_path)
+        when section.slice(0,4) == 'wait'
+          WaitButtonContent.new
         else
           # not sure. keep it as nil
         end
       }.compact
 
-      background_sections = parsed_page.select { |elem| elem.is_a?(BackgroundImage) }
-      other_sections = parsed_page.select { |elem| !elem.is_a?(BackgroundImage) }
+      background_sections = parsed_page.select { |elem| elem.is_a?(BgImageContent) }
+      other_sections = parsed_page.select { |elem| !elem.is_a?(BgImageContent) }
 
       sorted_page =
         if background_sections.empty?

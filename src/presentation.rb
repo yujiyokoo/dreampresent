@@ -7,29 +7,32 @@ class Presentation
     @pages = pages
   end
 
-  def next_or_back(length)
-    while true do
-      rand(1) # hopefully this would give us a "more random" start point
-      button_state = @dc_kos::get_button_state
-
-      # press STRAT or A to go forward
-      return 1 if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
-      return 1 if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
-
-      # press B to go back
-      return -1 if @dc_kos::btn_b?(button_state)
-
-      # press DOWN and B to quit
-      return length if @dc_kos::dpad_down?(button_state) || @dc_kos::btn_b?(button_state)
-    end
-  end
-
   def run
     idx = 0
     while(idx < @pages.length)
-      @pages[idx].render(@dc_kos)
-      idx += next_or_back(@pages.length)
-      idx = 0 if idx < 0
+      page_result = @pages[idx].render(@dc_kos)
+      puts "* * * * * * button pressed: #{page_result}"
+      if page_result == @dc_kos.class::PREVIOUS_PAGE
+        # page returned PREV - probably 'B' butten pressed
+        idx -= 1
+      elsif page_result == @dc_kos.class::QUIT
+        # page returned QUIT
+        idx += @pages.length
+      else
+        # page did not return PREV. Now wait for next_page button
+        key_input = @dc_kos.next_or_back
+
+        case
+        when key_input == @dc_kos.class::NEXT_PAGE # if NEXT given, go to next page
+          idx += 1
+        when key_input == @dc_kos.class::PREVIOUS_PAGE # if PREV given, go to previous page
+          idx -= 1
+        when key_input == @dc_kos.class::QUIT # if QUIT given, go to the end
+          idx += @pages.length
+        end
+      end
+      puts "- - - - current idx = #{idx}"
+      idx = 0 if idx < 0 # do not wrap around backwards
     end
   end
 end
