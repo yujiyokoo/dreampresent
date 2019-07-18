@@ -4,28 +4,6 @@ class BasePage
   end
 end
 
-PageClasses = []
-
-PageClasses.push (Class.new(BasePage) do
-  def render(dc_kos)
-    render_bg(dc_kos)
-    dc_kos.console_print("----------------")
-    dc_kos.render_png("/rd/Dreamcast.png", 100, 100)
-    dc_kos.draw_str("Developing Dreamcast games with mruby", 60, 30)
-    dc_kos.draw_str("Yuji Yokoo - @yujiyokoo", 60, 60)
-  end
-end).new
-
-PageClasses.push (Class.new(BasePage) do
-  def render(dc_kos)
-    render_bg(dc_kos)
-    dc_kos.console_print("----------------")
-    dc_kos.draw_str("About me (Yuji)", 60, 30 )
-    dc_kos.draw_str("Yuji Yokoo - Software developer\n15 years ago: Win32/MFC Desktop application developer", 60, 60 )
-    dc_kos.draw_str("Likes: Ruby, Console games", 60, 120 )
-  end
-end).new
-
 class PageTitle
   def initialize(content)
     @content = content
@@ -60,6 +38,23 @@ class ImageContent
   end
 end
 
+# This only works as a 'background' with 640x480 image
+class BackgroundImage
+  def initialize(path)
+    @path = String(path).strip
+    puts "-------- Background. path is: "
+    p @path
+  end
+
+  def render(dc_kos)
+    if @path && !@path.empty?
+      dc_kos.render_png(@path, 0, 0)
+    else
+      puts "Rendering background image with no path. Skipping."
+    end
+  end
+end
+
 =begin
 Parser parses input string (which is prepared by you, or read from a file).
 
@@ -89,44 +84,59 @@ class Page
 end
 
 class Parser
-  def parse_line(line)
-    split_line = line.split(': ')
+  def parse_line_xy(line)
+    split_line = line.split(':')
     tag = split_line[0]
     _unused, x, y = tag.split(',')
-    rest = split_line[1..-1].join(': ')
+    rest = split_line[1..-1].join(':').strip
     return x.to_i, y.to_i, rest
+  end
+
+  def parse_line_no_xy(line)
+    split_line = line.split(':')
+    path = split_line[1..-1].join(':')
+    return path
   end
 
   def parse(input_str)
     pages = input_str.split("\n=")
 
-    pages.map { |page|
+    last_background = [BackgroundImage.new(nil)]
+
+    page_objs = pages.map { |page|
       parsed_page = page.split("\n-").each_with_index.map { |section, idx|
         case
         when idx == 0
-          title = section.sub('=', '')
-          puts "title found: #{title}"
-          p PageTitle.new(title)
+          title = section.sub('=', '').strip # remove the first '='
           PageTitle.new(title)
         when section.slice(0,3) == 'txt'
-          puts "******** text content found"
-          p section
-          x, y, text_content = parse_line(section)
-          puts "******** parsed:"
-          p x, y, text_content
-          # it's text
+          x, y, text_content = parse_line_xy(section)
           TextContent.new(x, y, text_content)
         when section.slice(0,3) == 'img'
-          # it's image
-          x, y, image_path = parse_line(section)
+          x, y, image_path = parse_line_xy(section)
           ImageContent.new(x, y, image_path)
+        when section.slice(0,3) == 'bkg'
+          bg_path = parse_line_no_xy(section)
+          BackgroundImage.new(bg_path)
         else
           # not sure. keep it as nil
         end
       }.compact
-      puts "==== parsed page:"
-      p parsed_page
-      Page.new(parsed_page)
+
+      background_sections = parsed_page.select { |elem| elem.is_a?(BackgroundImage) }
+      other_sections = parsed_page.select { |elem| !elem.is_a?(BackgroundImage) }
+
+      sorted_page =
+        if background_sections.empty?
+          last_background + other_sections
+        else
+          last_background = background_sections
+          background_sections + other_sections
+        end
+
+      puts "==== sorted page:"
+      p sorted_page
+      Page.new(sorted_page)
     }
   end
 end
