@@ -44,15 +44,17 @@ class DcKosRb
       rand(1) # hopefully this would give us a "more random" start point
       button_state = @dc_kos::get_button_state
 
+      # NOTE order is important here.
+
+      # press DOWN and B to quit
+      return QUIT if @dc_kos::dpad_down?(button_state) && @dc_kos::btn_b?(button_state)
+
       # press STRAT or A to go forward
       return NEXT_PAGE if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
       return NEXT_PAGE if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
 
       # press B to go back
       return PREVIOUS_PAGE if @dc_kos::btn_b?(button_state)
-
-      # press DOWN and B to quit
-      return QUIT if @dc_kos::dpad_down?(button_state) || @dc_kos::btn_b?(button_state)
     end
   end
 end
