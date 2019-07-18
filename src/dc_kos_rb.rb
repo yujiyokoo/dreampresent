@@ -17,6 +17,7 @@ class DcKosRb
     load_png(filepath, 1, 1, 640, 640)
   end
 
+  # This and method_missing are for delegating functions not defined here to @dc_kos
   def respond_to?(method)
     if method == :respond_to?
       true
@@ -25,6 +26,7 @@ class DcKosRb
     end
   end
 
+  # This and respond_to? are for delegating functions not defined here to @dc_kos
   def method_missing(method, *args, &block)
     if @dc_kos.respond_to?(method)
       @dc_kos.send(method, *args, &block)
