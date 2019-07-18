@@ -10,7 +10,7 @@ class Presentation
   def run
     idx = 0
     while(idx < @pages.length)
-      page_result = @pages[idx].render(@dc_kos)
+      page_result = @pages[idx].render(@dc_kos, idx)
       puts "* * * * * * button pressed: #{page_result}"
       if page_result == @dc_kos.class::PREVIOUS_PAGE
         # page returned PREV - probably 'B' butten pressed

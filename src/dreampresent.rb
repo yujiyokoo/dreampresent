@@ -9,6 +9,6 @@ class Dreampresent
 
   def start
     puts "Dreampresent: starting"
-    Presentation.new(@dc_kos, PageData.new(@dc_kos).all).run
+    Presentation.new(@dc_kos, PageData.new(@dc_kos, Time.now).all).run
   end
 end
