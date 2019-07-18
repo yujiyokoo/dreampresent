@@ -12,6 +12,9 @@
 // Convert ARGB1555 to RGB565 - drops the A bit and G is exapanded to 6 bits
 #define CONV1555TO565(colour) ( (((colour) & 0x7C00) << 1) | (((colour) & 0x03E0) << 1) | ((colour) & 0x001F) )
 
+// CONVERT R, G, B to RGB565
+#define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  )
+
 // Be careful with this function. It'll attempt to read the entire file.
 static mrb_value read_whole_txt_file(mrb_state* mrb, mrb_value self) {
   char buffer[2048];
@@ -176,6 +179,54 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
+// copied from mrbtris draw20x20_640
+mrb_value render_sq(mrb_state *mrb, mrb_value self) {
+  mrb_int x, y, r, g, b;
+  mrb_get_args(mrb, "iiiii", &x, &y, &r, &g, &b);
+
+  int i = 0, j = 0;
+
+  if(r == 0 && g == 0 && b == 0) {
+    for(i = 0; i < 20; i++) {
+      for(j = 0; j < 20; j++) {
+        vram_s[x+j + (y+i) * 640] = PACK_PIXEL(r, g, b);
+      }
+    }
+  } else {
+    int r_light = (r+128 <= 255) ? r+128 : 255;
+    int g_light = (g+128 <= 255) ? g+128 : 255;
+    int b_light = (b+128 <= 255) ? b+128 : 255;
+
+    int r_dark = (r-64 >= 0) ? r-64 : 0;
+    int g_dark = (g-64 >= 0) ? g-64 : 0;
+    int b_dark = (b-64 >= 0) ? b-64 : 0;
+
+    // TODO: implement lines and use them.
+    for(j = 0; j < 20; j++) {
+      vram_s[x+j + (y) * 640] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+j + (y+19) * 640] = PACK_PIXEL(30, 30, 30);
+    }
+    for(j = 1; j < 19; j++) {
+      vram_s[x+j + (y+1) * 640] = PACK_PIXEL(r_light, g_light, b_light);
+    }
+    for(j = 2; j < 20; j++) {
+      vram_s[x+j + (y+19) * 640] = PACK_PIXEL(r_dark, g_dark, b_dark);
+    }
+    for(i = 2; i < 19; i++) {
+      vram_s[x + (y+i) * 640] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+1 + (y+i) * 640] = PACK_PIXEL(r_light, g_light, b_light);
+      for(j = 2; j < 19; j++) {
+        vram_s[x+j + (y+i) * 640] = PACK_PIXEL(r, g, b);
+      }
+      vram_s[x+19 + (y+i) * 640] = PACK_PIXEL(r_dark, g_dark, b_dark);
+      //vram_s[x+19 + (y+i) * 640] = PACK_PIXEL(30, 30, 30);
+    }
+  }
+
+  return mrb_nil_value();
+}
+
+
 // this renders to vram_s
 mrb_value render_png(mrb_state* mrb, mrb_value self) {
   mrb_value png_path;
@@ -237,6 +288,7 @@ void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_b?", btn_b, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "dpad_down?", dpad_down, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "render_sq", render_sq, MRB_ARGS_REQ(5));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
 
 }
