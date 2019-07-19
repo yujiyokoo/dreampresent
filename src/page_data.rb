@@ -1,3 +1,11 @@
+class PresentationState
+  attr_reader :page_index, :time_adjustment
+
+  def initialize(page_index, time_adjustment)
+    @page_index, @time_adjustment = page_index, time_adjustment
+  end
+end
+
 class BasePage
   def render_bg(dc_kos)
     dc_kos.render_png("/rd/test_image.png", 0, 0)
@@ -13,7 +21,7 @@ class PageTitleContent
     @content = content
   end
 
-  def render(dc_kos, _page_index)
+  def render(dc_kos, _presentation_state)
     dc_kos.draw_str(@content, 10, 2)
     ResultConstants::OK
   end
@@ -26,7 +34,7 @@ class TextContent
     @content = content
   end
 
-  def render(dc_kos, _page_index)
+  def render(dc_kos, _presentation_state)
     dc_kos.draw_str(@content, @x, @y)
     ResultConstants::OK
   end
@@ -39,7 +47,7 @@ class ImageContent
     p @path
   end
 
-  def render(dc_kos, _page_index)
+  def render(dc_kos, _presentation_state)
     dc_kos.render_png(@path, @x, @y)
     ResultConstants::OK
   end
@@ -55,15 +63,15 @@ class PageBaseContent
     p @path
   end
 
-  def render(dc_kos, page_index)
+  def render(dc_kos, presentation_state)
     if @path && !@path.empty?
       dc_kos.render_png(@path, 0, 0)
     else
       puts "Rendering background image with no path. Skipping."
     end
 
-    render_timer_progress(dc_kos, @start_time)
-    render_page_progress(dc_kos, @page_count, page_index)
+    render_timer_progress(dc_kos, @start_time, presentation_state.time_adjustment)
+    render_page_progress(dc_kos, @page_count, presentation_state.page_index)
     ResultConstants::OK
   end
 
@@ -75,13 +83,14 @@ class PageBaseContent
     dc_kos.render_sq(pos_x, PAGES_Y_POS, 0, 0, 255)
   end
 
-  def render_timer_progress(dc_kos, start_time)
+  def render_timer_progress(dc_kos, start_time, time_adjustment)
     DURATION = 40 * 60 # 40 mins
     PROGRESS_LEN = 620
     PROGRESS_Y_POS = 450 
 
-    pos_x = ((Time.now.to_i - start_time.to_i) / DURATION * PROGRESS_LEN).to_i
+    pos_x = ((Time.now.to_i - start_time.to_i + time_adjustment) / DURATION * PROGRESS_LEN).to_i
     pos_x = PROGRESS_LEN if pos_x > PROGRESS_LEN
+    pos_x = 0 if pos_x < 0
 
     dc_kos.render_sq(pos_x, PROGRESS_Y_POS, 255, 0, 0)
   end
@@ -89,7 +98,7 @@ end
 
 # Wait for A or Start in page to go to next section
 class WaitButtonContent
-  def render(dc_kos, _page_index)
+  def render(dc_kos, _presentation_state)
     key_input = dc_kos.next_or_back
 
     if key_input == dc_kos.class::NEXT_PAGE
@@ -121,11 +130,11 @@ class Page
     @sections = sections
   end
 
-  def render(dc_kos, page_index)
+  def render(dc_kos, presentation_state)
     puts "------ about to call each on @sections"
     p @sections
     @sections.each { |s|
-      render_result = s.render(dc_kos, page_index)
+      render_result = s.render(dc_kos, presentation_state)
       puts "-------- section render result: #{ render_result }"
 
       # return if user pressed PREV, QUIT, etc.

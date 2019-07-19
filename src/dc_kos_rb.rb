@@ -38,6 +38,8 @@ class DcKosRb
   NEXT_PAGE = 1
   PREVIOUS_PAGE = -1
   QUIT = -2
+  FWD = -3
+  REW = -4
 
   def next_or_back
     while true do
@@ -51,10 +53,13 @@ class DcKosRb
 
       # press STRAT or A to go forward
       return NEXT_PAGE if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
-      return NEXT_PAGE if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
 
       # press B to go back
       return PREVIOUS_PAGE if @dc_kos::btn_b?(button_state)
+
+      # left and right on dpad for skipping or rewinding the time indicator
+      return FWD if @dc_kos::dpad_right?(button_state)
+      return REW if @dc_kos::dpad_left?(button_state)
     end
   end
 end

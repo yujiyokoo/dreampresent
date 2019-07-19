@@ -81,6 +81,14 @@ static mrb_value dpad_down(mrb_state* mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_DOWN);
 };
 
+static mrb_value dpad_right(mrb_state* mrb, mrb_value self) {
+  return check_btn(mrb, self, CONT_DPAD_RIGHT);
+};
+
+static mrb_value dpad_left(mrb_state* mrb, mrb_value self) {
+  return check_btn(mrb, self, CONT_DPAD_LEFT);
+};
+
 static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   char* unwrapped_content;
   mrb_value str_content;
@@ -288,6 +296,8 @@ void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_b?", btn_b, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "dpad_down?", dpad_down, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "dpad_right?", dpad_right, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "dpad_left?", dpad_left, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "render_sq", render_sq, MRB_ARGS_REQ(5));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
 
