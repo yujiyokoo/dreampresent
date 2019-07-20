@@ -76,23 +76,23 @@ class PageBaseContent
   end
 
   def render_page_progress(dc_kos, page_count, page_index)
-    PAGES_BAR_LEN = 620
-    PAGES_Y_POS = 430
+    PAGES_BAR_LEN = 640 - 32
+    PAGES_Y_POS = 410
     pos_x = (page_index / (page_count - 1) * PAGES_BAR_LEN).to_i
 
-    dc_kos.render_sq(pos_x, PAGES_Y_POS, 0, 0, 255)
+    dc_kos.render_png("/rd/swirl_blue_32x28.png", pos_x, PAGES_Y_POS)
   end
 
   def render_timer_progress(dc_kos, start_time, time_adjustment)
     DURATION = 40 * 60 # 40 mins
-    PROGRESS_LEN = 620
-    PROGRESS_Y_POS = 450 
+    PROGRESS_LEN = 640 - 32
+    PROGRESS_Y_POS = 440
 
     pos_x = ((Time.now.to_i - start_time.to_i + time_adjustment) / DURATION * PROGRESS_LEN).to_i
     pos_x = PROGRESS_LEN if pos_x > PROGRESS_LEN
     pos_x = 0 if pos_x < 0
 
-    dc_kos.render_sq(pos_x, PROGRESS_Y_POS, 255, 0, 0)
+    dc_kos.render_png("/rd/swirl_red_32x28.png", pos_x, PROGRESS_Y_POS)
   end
 end
 
