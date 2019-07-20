@@ -189,7 +189,7 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-int is_in_screen(x, y) {
+int _is_in_screen(x, y) {
   int result = x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
   return x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
 }
@@ -223,7 +223,7 @@ mrb_value render_png(mrb_state* mrb, mrb_value self) {
       pixel = uint16_data[(y) * img.w + (x)];
       curr_y = (base_y + y);
       curr_x = (base_x + x);
-      if (pixel >> 15 && is_in_screen(curr_x, curr_y)) {
+      if (pixel >> 15 && _is_in_screen(curr_x, curr_y)) {
         vram_s[curr_y * PX_PER_LINE + curr_x] = CONV1555TO565(pixel);
       }
     }
