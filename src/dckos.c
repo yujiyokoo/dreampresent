@@ -15,6 +15,8 @@
 // CONVERT R, G, B to RGB565
 #define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  )
 
+int PX_PER_LINE = 640;
+
 // Be careful with this function. It'll attempt to read the entire file.
 static mrb_value read_whole_txt_file(mrb_state* mrb, mrb_value self) {
   char buffer[2048];
@@ -98,7 +100,7 @@ static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   unwrapped_content = mrb_str_to_cstr(mrb, str_content); // no need to free this
   printf("%s\n", unwrapped_content);
 
-  bfont_draw_str(vram_s + x + (y * 640), 640, 0, unwrapped_content);
+  bfont_draw_str(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0, unwrapped_content);
 
   return mrb_nil_value();
 }
@@ -197,7 +199,7 @@ mrb_value render_sq(mrb_state *mrb, mrb_value self) {
   if(r == 0 && g == 0 && b == 0) {
     for(i = 0; i < 20; i++) {
       for(j = 0; j < 20; j++) {
-        vram_s[x+j + (y+i) * 640] = PACK_PIXEL(r, g, b);
+        vram_s[x+j + (y+i) * PX_PER_LINE] = PACK_PIXEL(r, g, b);
       }
     }
   } else {
@@ -211,29 +213,33 @@ mrb_value render_sq(mrb_state *mrb, mrb_value self) {
 
     // TODO: implement lines and use them.
     for(j = 0; j < 20; j++) {
-      vram_s[x+j + (y) * 640] = PACK_PIXEL(30, 30, 30);
-      vram_s[x+j + (y+19) * 640] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+j + (y) * PX_PER_LINE] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+j + (y+19) * PX_PER_LINE] = PACK_PIXEL(30, 30, 30);
     }
     for(j = 1; j < 19; j++) {
-      vram_s[x+j + (y+1) * 640] = PACK_PIXEL(r_light, g_light, b_light);
+      vram_s[x+j + (y+1) * PX_PER_LINE] = PACK_PIXEL(r_light, g_light, b_light);
     }
     for(j = 2; j < 20; j++) {
-      vram_s[x+j + (y+19) * 640] = PACK_PIXEL(r_dark, g_dark, b_dark);
+      vram_s[x+j + (y+19) * PX_PER_LINE] = PACK_PIXEL(r_dark, g_dark, b_dark);
     }
     for(i = 2; i < 19; i++) {
-      vram_s[x + (y+i) * 640] = PACK_PIXEL(30, 30, 30);
-      vram_s[x+1 + (y+i) * 640] = PACK_PIXEL(r_light, g_light, b_light);
+      vram_s[x + (y+i) * PX_PER_LINE] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+1 + (y+i) * PX_PER_LINE] = PACK_PIXEL(r_light, g_light, b_light);
       for(j = 2; j < 19; j++) {
-        vram_s[x+j + (y+i) * 640] = PACK_PIXEL(r, g, b);
+        vram_s[x+j + (y+i) * PX_PER_LINE] = PACK_PIXEL(r, g, b);
       }
-      vram_s[x+19 + (y+i) * 640] = PACK_PIXEL(r_dark, g_dark, b_dark);
-      //vram_s[x+19 + (y+i) * 640] = PACK_PIXEL(30, 30, 30);
+      vram_s[x+19 + (y+i) * PX_PER_LINE] = PACK_PIXEL(r_dark, g_dark, b_dark);
+      //vram_s[x+19 + (y+i) * PX_PER_LINE] = PACK_PIXEL(30, 30, 30);
     }
   }
 
   return mrb_nil_value();
 }
 
+int is_in_screen(x, y) {
+  int result = x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
+  return x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
+}
 
 // this renders to vram_s
 mrb_value render_png(mrb_state* mrb, mrb_value self) {
@@ -257,9 +263,16 @@ mrb_value render_png(mrb_state* mrb, mrb_value self) {
   uint16_t* uint16_data = (uint16_t*)(img.data);
 
   for(y = 0 ; y < img.h ; y++) {
+    uint16_t pixel = 0;
+    int curr_x = 0;
+    int curr_y = 0;
     for(x = 0 ; x < img.w ; x++) {
-      // TODO clip/skip out of bounds
-      vram_s[(base_y + y) * 640 + (base_x + x)] = CONV1555TO565(uint16_data[(y) * img.w + (x)]);
+      pixel = uint16_data[(y) * img.w + (x)];
+      curr_y = (base_y + y);
+      curr_x = (base_x + x);
+      if (pixel >> 15 && is_in_screen(curr_x, curr_y)) {
+        vram_s[curr_y * PX_PER_LINE + curr_x] = CONV1555TO565(pixel);
+      }
     }
   }
 
