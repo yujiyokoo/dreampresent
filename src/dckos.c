@@ -17,15 +17,19 @@
 
 int PX_PER_LINE = 640;
 
+int _is_in_screen(x, y) {
+  return x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
+}
+
 // Be careful with this function. It'll attempt to read the entire file.
-static mrb_value read_whole_txt_file(mrb_state* mrb, mrb_value self) {
+static mrb_value read_whole_txt_file(mrb_state *mrb, mrb_value self) {
   char buffer[2048];
   int length;
   file_t f;
   mrb_value m_path;
-  char* path;
+  char *path;
 
-  char* result = NULL;
+  char *result = NULL;
   result = mrb_malloc(mrb, sizeof(char));
   *result = '\0';
 
@@ -50,7 +54,7 @@ static mrb_value read_whole_txt_file(mrb_state* mrb, mrb_value self) {
   // TODO: freeing?
 }
 
-static mrb_value get_button_state(mrb_state* mrb, mrb_value self) {
+static mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
   maple_device_t *cont1;
   cont_state_t *state;
   if((cont1 = maple_enum_type(0, MAPLE_FUNC_CONTROLLER))){
@@ -60,39 +64,39 @@ static mrb_value get_button_state(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value check_btn(mrb_state* mrb, mrb_value self, uint16 target) {
+static mrb_value check_btn(mrb_state *mrb, mrb_value self, uint16 target) {
   struct mrb_value state;
   mrb_get_args(mrb, "i", &state);
 
   return mrb_bool_value(mrb_fixnum(state) & target);
 }
 
-static mrb_value btn_start(mrb_state* mrb, mrb_value self) {
+static mrb_value btn_start(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_START);
 };
 
-static mrb_value btn_a(mrb_state* mrb, mrb_value self) {
+static mrb_value btn_a(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_A);
 };
 
-static mrb_value btn_b(mrb_state* mrb, mrb_value self) {
+static mrb_value btn_b(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_B);
 };
 
-static mrb_value dpad_down(mrb_state* mrb, mrb_value self) {
+static mrb_value dpad_down(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_DOWN);
 };
 
-static mrb_value dpad_right(mrb_state* mrb, mrb_value self) {
+static mrb_value dpad_right(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_RIGHT);
 };
 
-static mrb_value dpad_left(mrb_state* mrb, mrb_value self) {
+static mrb_value dpad_left(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_LEFT);
 };
 
-static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
-  char* unwrapped_content;
+static mrb_value draw_str(mrb_state *mrb, mrb_value self) {
+  char *unwrapped_content;
   mrb_value str_content;
   mrb_int x, y;
 
@@ -105,8 +109,8 @@ static mrb_value draw_str(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value console_print(mrb_state* mrb, mrb_value self) {
-  char* unwrapped_content;
+static mrb_value console_print(mrb_state *mrb, mrb_value self) {
+  char *unwrapped_content;
   mrb_value str_content;
 
   mrb_get_args(mrb, "S", &str_content);
@@ -116,7 +120,7 @@ static mrb_value console_print(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-void _display_png_file(char* file_path, int x1, int y1, int x2, int y2) {
+void _display_png_file(char *file_path, int x1, int y1, int x2, int y2) {
   pvr_ptr_t texture;
   pvr_poly_cxt_t cxt;
   pvr_poly_hdr_t hdr;
@@ -175,11 +179,26 @@ void _display_png_file(char* file_path, int x1, int y1, int x2, int y2) {
   return;
 }
 
+mrb_value draw_horizontal_line(mrb_state *mrb, mrb_value self) {
+  mrb_int x, y, len, r, g, b;
+  mrb_get_args(mrb, "iiiiii", &x, &y, &len, &r, &g, &b);
+
+  int curr_x = 0;
+
+  for(curr_x = x; curr_x < x + len; curr_x ++) {
+    if(_is_in_screen(curr_x, y)) {
+      vram_s[y * PX_PER_LINE + curr_x] = PACK_PIXEL(r, g, b);
+    }
+  }
+
+  return mrb_nil_value();
+}
+
 // this uses pvr functions to show max 512x512 image.
-mrb_value load_png(mrb_state* mrb, mrb_value self) {
+mrb_value load_png(mrb_state *mrb, mrb_value self) {
   mrb_value png_path;
   mrb_int x1, y1, x2, y2;
-  char* c_png_path;
+  char *c_png_path;
 
   mrb_get_args(mrb, "Siiii", &png_path, &x1, &y1, &x2, &y2);
   c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this
@@ -189,16 +208,11 @@ mrb_value load_png(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-int _is_in_screen(x, y) {
-  int result = x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
-  return x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
-}
-
 // this renders to vram_s
-mrb_value render_png(mrb_state* mrb, mrb_value self) {
+mrb_value render_png(mrb_state *mrb, mrb_value self) {
   mrb_value png_path;
   mrb_int base_x, base_y;
-  char* c_png_path;
+  char *c_png_path;
   kos_img_t img;
 
   mrb_get_args(mrb, "Sii", &png_path, &base_x, &base_y);
@@ -213,7 +227,7 @@ mrb_value render_png(mrb_state* mrb, mrb_value self) {
   int x = 0;
   int y = 0;
 
-  uint16_t* uint16_data = (uint16_t*)(img.data);
+  uint16_t *uint16_data = (uint16_t*)(img.data);
 
   for(y = 0 ; y < img.h ; y++) {
     uint16_t pixel = 0;
@@ -234,13 +248,13 @@ mrb_value render_png(mrb_state* mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value pvr_intialise(mrb_state* mrb, mrb_value self) {
+static mrb_value pvr_intialise(mrb_state *mrb, mrb_value self) {
   pvr_init_defaults();
 
   return mrb_nil_value();
 }
 
-void print_exception(mrb_state* mrb) {
+void print_exception(mrb_state *mrb) {
   if(mrb->exc) {
     mrb_value backtrace = mrb_get_backtrace(mrb);
     puts(mrb_str_to_cstr(mrb, mrb_inspect(mrb, backtrace)));
@@ -251,7 +265,7 @@ void print_exception(mrb_state* mrb) {
   }
 }
 
-void define_module_functions(mrb_state* mrb, struct RClass* module) {
+void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
@@ -265,5 +279,6 @@ void define_module_functions(mrb_state* mrb, struct RClass* module) {
   mrb_define_module_function(mrb, module, "dpad_right?", dpad_right, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "dpad_left?", dpad_left, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
+  mrb_define_module_function(mrb, module, "draw_horizontal_line", draw_horizontal_line, MRB_ARGS_REQ(6));
 
 }

@@ -43,8 +43,6 @@ end
 class ImageContent
   def initialize(x, y, path)
     @x, @y, @path = x, y, path.strip
-    puts "-------- ImageContent. path is: "
-    p @path
   end
 
   def render(dc_kos, _presentation_state)
@@ -109,6 +107,25 @@ class WaitButtonContent
   end
 end
 
+class DrawHorizontalLineContent
+  def initialize(x, y, len, colour)
+    @x, @y, @len, @colour = x, y, len, colour.strip.downcase
+  end
+
+  def render(dc_kos, _presentation_state)
+    # currently supports 'red'
+    # everything else will be white
+    r, g, b = if @colour == 'red'
+      [255, 0, 0]
+    else
+      [255, 255, 255]
+    end
+
+    dc_kos.draw_horizontal_line(@x, @y, @len, r, g, b)
+    ResultConstants::OK
+  end
+end
+
 =begin
 Parser parses input string (which is prepared by you, or read from a file).
 
@@ -154,6 +171,14 @@ class Parser
     return x.to_i, y.to_i, rest
   end
 
+  def parse_line_xy_len_col(line)
+    split_line = line.split(':')
+    tag = split_line[0]
+    _unused, x, y, len = tag.split(',')
+
+    return x.to_i, y.to_i, len.to_i, split_line[1]
+  end
+
   def parse_line_no_xy(line)
     split_line = line.split(':')
     path = split_line[1..-1].join(':')
@@ -183,6 +208,9 @@ class Parser
           PageBaseContent.new(bg_path, page_count, start_time)
         when section.slice(0,4) == 'wait'
           WaitButtonContent.new
+        when section.slice(0,4) == 'line'
+          x, y, len,colour = parse_line_xy_len_col(section)
+          DrawHorizontalLineContent.new(x, y, len,colour)
         else
           # not sure. keep it as nil
         end
