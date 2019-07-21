@@ -99,14 +99,14 @@ mrb_value dpad_left(mrb_state *mrb, mrb_value self) {
 mrb_value draw_str(mrb_state *mrb, mrb_value self) {
   char *unwrapped_content;
   mrb_value str_content;
-  mrb_int x, y, r, g, b;
+  mrb_int x, y, r, g, b, bg_on;
 
-  mrb_get_args(mrb, "Siiiii", &str_content, &x, &y, &r, &g, &b);
+  mrb_get_args(mrb, "Siiiiii", &str_content, &x, &y, &r, &g, &b, &bg_on);
   unwrapped_content = mrb_str_to_cstr(mrb, str_content);
   printf("%s\n", unwrapped_content);
 
   // assuming 16 bit colours
-  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, PACK_PIXEL(r, g, b), 0x00000000, (sizeof (uint16)) << 3, 0, unwrapped_content);
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, PACK_PIXEL(r, g, b), 0x00000000, (sizeof (uint16)) << 3, bg_on, unwrapped_content);
 
   return mrb_nil_value();
 }
@@ -250,8 +250,26 @@ mrb_value render_png(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value pvr_intialise(mrb_state *mrb, mrb_value self) {
+mrb_value pvr_intialise(mrb_state *mrb, mrb_value self) {
   pvr_init_defaults();
+
+  return mrb_nil_value();
+}
+
+mrb_value next_video_mode(mrb_state *mrb, mrb_value self) {
+  // TODO: this is dup setting from main.c
+  static int vid_modes[] = {DM_640x480_VGA, DM_640x480_NTSC_IL, DM_640x480_PAL_IL};
+  static int idx = 0;
+
+  if(idx == (sizeof(vid_modes) / sizeof(int)) - 1 ) {
+    idx = 0;
+  } else {
+    idx++;
+  }
+
+  printf("---- set video mode to %d\n", vid_modes[idx]);
+
+  vid_set_mode(vid_modes[idx], PM_RGB565);
 
   return mrb_nil_value();
 }
@@ -269,7 +287,7 @@ void print_exception(mrb_state *mrb) {
 
 void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(6));
+  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(7));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, module, "render_png", render_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
@@ -282,5 +300,6 @@ void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "dpad_left?", dpad_left, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_horizontal_line", draw_horizontal_line, MRB_ARGS_REQ(6));
+  mrb_define_module_function(mrb, module, "next_video_mode", next_video_mode, MRB_ARGS_NONE());
 
 }

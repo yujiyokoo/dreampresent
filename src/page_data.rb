@@ -22,21 +22,19 @@ class PageTitleContent
   end
 
   def render(dc_kos, _presentation_state)
-    dc_kos.draw_str(@content, 10, 2, 'white')
+    dc_kos.draw_str(@content, 10, 2, 'white', 'yes')
     ResultConstants::OK
   end
 end
 
 class TextContent
-  def initialize(x, y, content, colour)
-    @x = x
-    @y = y
-    @content = content
-    @colour = colour
+  def initialize(x, y, content, colour, show_bg)
+    @x, @y, @content, @colour, @show_bg =
+      x, y, content, colour, show_bg
   end
 
   def render(dc_kos, _presentation_state)
-    dc_kos.draw_str(@content, @x, @y, @colour)
+    dc_kos.draw_str(@content, @x, @y, @colour, @show_bg)
     ResultConstants::OK
   end
 end
@@ -154,7 +152,7 @@ class Page
     @sections = sections
   end
 
-  def render(dc_kos, presentation_state)
+  def show(dc_kos, presentation_state)
     puts "------ about to call each on @sections"
     p @sections
     @sections.each { |s|
@@ -165,17 +163,19 @@ class Page
       return render_result unless [dc_kos.class::NEXT_PAGE, ResultConstants::OK].include?(render_result)
     }
 
-    return dc_kos.class::NEXT_PAGE
+    # if waiting for input between sections above did not result in returning
+    # input result, get input result here and return it
+    return dc_kos.next_or_back
   end
 end
 
 class Parser
-  def parse_line_xy(line)
+  def parse_line_xy_col_bg(line)
     split_line = line.split(':')
     tag = split_line[0]
-    _unused, x, y, colour = tag.split(',')
+    _unused, x, y, colour, show_bg = tag.split(',')
     rest = split_line[1..-1].join(':')
-    return x.to_i, y.to_i, colour, rest
+    return x.to_i, y.to_i, colour, show_bg, rest
   end
 
   def parse_line_xy_len_col(line)
@@ -209,10 +209,10 @@ class Parser
           title = section.sub('=', '').strip # remove the first '='
           PageTitleContent.new(title)
         when section.slice(0,3) == 'txt'
-          x, y, colour, text_content = parse_line_xy(section)
-          TextContent.new(x, y, text_content, colour)
+          x, y, colour, show_bg, text_content = parse_line_xy_col_bg(section)
+          TextContent.new(x, y, text_content, colour, show_bg)
         when section.slice(0,3) == 'img'
-          x, y, _colour, image_path = parse_line_xy(section)
+          x, y, _colour, _bg_colour, image_path = parse_line_xy_col_bg(section)
           ImageContent.new(x, y, image_path)
         when section.slice(0,3) == 'bkg'
           bg_path = parse_line_no_xy(section)

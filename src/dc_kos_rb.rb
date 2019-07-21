@@ -6,16 +6,24 @@ class DcKosRb
 
   LINE_HEIGHT = 30
   # this understands '\n' as linebreak
-  def draw_str(str, x, y, line_height = LINE_HEIGHT, colour)
-    rgb = case colour
-    when 'red'
-       [255, 0, 0]
-    else # unknown colours default to white
-       [255, 255, 255]
-    end
+  def draw_str(str, x, y, line_height = LINE_HEIGHT, colour, show_bg)
+    rgb =
+      case colour
+      when 'red'
+         [255, 0, 0]
+      else # unknown colours default to white
+         [255, 255, 255]
+      end
+
+    bg_on =
+      if ['true', 'yes'].include? show_bg
+        1
+      else
+        0
+      end
 
     str.split("\n").each_with_index { |line, idx|
-      @dc_kos.draw_str(line, x, y + (line_height * idx+1), *rgb)
+      @dc_kos.draw_str(line, x, y + (line_height * idx+1), *rgb, bg_on)
     }
   end
 
@@ -47,6 +55,7 @@ class DcKosRb
   QUIT = -2
   FWD = -3
   REW = -4
+  SWITCH_VIDEO_MODE = -5
 
   def next_or_back
     previous_state = @dc_kos::get_button_state
@@ -56,6 +65,8 @@ class DcKosRb
       # NOTE order is important here.
 
       return QUIT if quit_combination?(previous_state, button_state)
+
+      return SWITCH_VIDEO_MODE if switch_video_mode_combination?(previous_state, button_state)
 
       # press STRAT or A to go forward
       return NEXT_PAGE if start_or_a_pressed?(previous_state, button_state)
@@ -75,6 +86,11 @@ class DcKosRb
   def quit_combination?(previous, current)
     !(@dc_kos::dpad_down?(previous) && @dc_kos::btn_b?(previous)) &&
       (@dc_kos::dpad_down?(current) && @dc_kos::btn_b?(current))
+  end
+
+  def switch_video_mode_combination?(previous, current)
+    !(@dc_kos::dpad_down?(previous) && @dc_kos::btn_a?(previous)) &&
+      (@dc_kos::dpad_down?(current) && @dc_kos::btn_a?(current))
   end
 
   def start_or_a_pressed?(previous, current)

@@ -8,7 +8,7 @@
    you need to set any flags you want here. Here are some possibilities:
 
    INIT_NONE        -- don't do any auto init
-   INIT_IRQ     -- knable IRQs
+   INIT_IRQ     -- Enable IRQs
    INIT_THD_PREEMPT -- Enable pre-emptive threading
    INIT_NET     -- Enable networking (doesn't imply lwIP!)
    INIT_MALLOCSTATS -- Enable a call to malloc_stats() right before shutdown
@@ -22,7 +22,7 @@ extern uint8 romdisk[];
 /* And specify a romdisk, if you want one (or leave it out) */
 KOS_INIT_ROMDISK(romdisk);
 
-extern const uint8_t dreampresent[]; // declared in the rb file
+extern const uint8_t dreampresent_bytecode[]; // compiled ruby code
 
 int main(int argc, char **argv) {
     vid_set_mode(DM_640x480_VGA, PM_RGB565);
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     define_module_functions(mrb, dc_kos);
 
-    mrb_load_irep(mrb, dreampresent);
+    mrb_load_irep(mrb, dreampresent_bytecode);
 
     print_exception(mrb);
 
