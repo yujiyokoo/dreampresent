@@ -25,7 +25,7 @@ $(TARGET): $(OBJS) $(MRB_BYTECODE)
 	kos-cc $(CFLAGS) -o $(TARGET) $(OBJS) -lmruby -lmruby_core -lm -lpng -lkosutils -lz
 
 $(MRB_BYTECODE): src/dreampresent.rb
-	/vagrant/src/mruby-host/bin/mrbc -g -Bdreampresent -o src/dreampresent.c $(MRB_SOURCES)
+	/vagrant/src/mruby-host/bin/mrbc -g -Bdreampresent_bytecode -o src/dreampresent.c $(MRB_SOURCES)
 
 run: $(TARGET)
 	$(KOS_LOADER) $(TARGET)
