@@ -193,7 +193,11 @@ class Parser
   end
 
   def parse(input_str, start_time)
-    pages = input_str.split("\n=")
+    pages = input_str
+      .split("\n")
+      .reject { |l| l.slice(0, 1) == '#' } # remove comment lines
+      .join("\n")
+      .split("\n=")
 
     page_count = pages.size
     last_background = [PageBaseContent.new(nil, page_count, start_time)]
