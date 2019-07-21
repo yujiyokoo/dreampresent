@@ -6,9 +6,16 @@ class DcKosRb
 
   LINE_HEIGHT = 30
   # this understands '\n' as linebreak
-  def draw_str(str, x, y, line_height = LINE_HEIGHT)
+  def draw_str(str, x, y, line_height = LINE_HEIGHT, colour)
+    rgb = case colour
+    when 'red'
+       [255, 0, 0]
+    else # unknown colours default to white
+       [255, 255, 255]
+    end
+
     str.split("\n").each_with_index { |line, idx|
-      @dc_kos.draw_str(line, x, y + (line_height * idx+1))
+      @dc_kos.draw_str(line, x, y + (line_height * idx+1), *rgb)
     }
   end
 

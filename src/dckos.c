@@ -99,13 +99,14 @@ mrb_value dpad_left(mrb_state *mrb, mrb_value self) {
 mrb_value draw_str(mrb_state *mrb, mrb_value self) {
   char *unwrapped_content;
   mrb_value str_content;
-  mrb_int x, y;
+  mrb_int x, y, r, g, b;
 
-  mrb_get_args(mrb, "Sii", &str_content, &x, &y);
+  mrb_get_args(mrb, "Siiiii", &str_content, &x, &y, &r, &g, &b);
   unwrapped_content = mrb_str_to_cstr(mrb, str_content);
   printf("%s\n", unwrapped_content);
 
-  bfont_draw_str(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0, unwrapped_content);
+  // assuming 16 bit colours
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, PACK_PIXEL(r, g, b), 0x00000000, (sizeof (uint16)) << 3, 0, unwrapped_content);
 
   return mrb_nil_value();
 }
@@ -268,7 +269,7 @@ void print_exception(mrb_state *mrb) {
 
 void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
-  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(3));
+  mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(6));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, module, "render_png", render_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());

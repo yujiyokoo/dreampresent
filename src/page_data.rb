@@ -22,20 +22,21 @@ class PageTitleContent
   end
 
   def render(dc_kos, _presentation_state)
-    dc_kos.draw_str(@content, 10, 2)
+    dc_kos.draw_str(@content, 10, 2, 'white')
     ResultConstants::OK
   end
 end
 
 class TextContent
-  def initialize(x, y, content)
+  def initialize(x, y, content, colour)
     @x = x
     @y = y
     @content = content
+    @colour = colour
   end
 
   def render(dc_kos, _presentation_state)
-    dc_kos.draw_str(@content, @x, @y)
+    dc_kos.draw_str(@content, @x, @y, @colour)
     ResultConstants::OK
   end
 end
@@ -172,9 +173,9 @@ class Parser
   def parse_line_xy(line)
     split_line = line.split(':')
     tag = split_line[0]
-    _unused, x, y = tag.split(',')
+    _unused, x, y, colour = tag.split(',')
     rest = split_line[1..-1].join(':')
-    return x.to_i, y.to_i, rest
+    return x.to_i, y.to_i, colour, rest
   end
 
   def parse_line_xy_len_col(line)
@@ -204,10 +205,10 @@ class Parser
           title = section.sub('=', '').strip # remove the first '='
           PageTitleContent.new(title)
         when section.slice(0,3) == 'txt'
-          x, y, text_content = parse_line_xy(section)
-          TextContent.new(x, y, text_content)
+          x, y, colour, text_content = parse_line_xy(section)
+          TextContent.new(x, y, text_content, colour)
         when section.slice(0,3) == 'img'
-          x, y, image_path = parse_line_xy(section)
+          x, y, _colour, image_path = parse_line_xy(section)
           ImageContent.new(x, y, image_path)
         when section.slice(0,3) == 'bkg'
           bg_path = parse_line_no_xy(section)
