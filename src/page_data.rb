@@ -76,7 +76,13 @@ class PageBaseContent
   def render_page_progress(dc_kos, page_count, page_index)
     PAGES_BAR_LEN = 640 - 32
     PAGES_Y_POS = 410
-    pos_x = (page_index / (page_count - 1) * PAGES_BAR_LEN).to_i
+
+    pos_x =
+      if page_count <= 1
+        0
+      else
+        (page_index / (page_count - 1) * PAGES_BAR_LEN).to_i
+      end
 
     dc_kos.render_png("/rd/swirl_blue_32x28.png", pos_x, PAGES_Y_POS)
   end
@@ -167,7 +173,7 @@ class Parser
     split_line = line.split(':')
     tag = split_line[0]
     _unused, x, y = tag.split(',')
-    rest = split_line[1..-1].join(':').strip
+    rest = split_line[1..-1].join(':')
     return x.to_i, y.to_i, rest
   end
 
@@ -236,8 +242,7 @@ end
 
 class PageData
   def initialize(dc_kos, start_time)
-    @dc_kos = dc_kos
-    @start_time = start_time
+    @dc_kos, @start_time = dc_kos, start_time
   end
 
   def all

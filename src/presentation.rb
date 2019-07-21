@@ -1,10 +1,6 @@
 class Presentation
   def initialize(dc_kos, pages)
-    @dc_kos = dc_kos
-
-    content_str = @dc_kos.read_whole_txt_file("/rd/content.dreampresent")
-
-    @pages = pages
+    @dc_kos, @pages  = dc_kos, pages
   end
 
   def run
