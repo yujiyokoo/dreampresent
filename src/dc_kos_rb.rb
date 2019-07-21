@@ -42,24 +42,52 @@ class DcKosRb
   REW = -4
 
   def next_or_back
+    previous_state = @dc_kos::get_button_state
     while true do
-      rand(1) # hopefully this would give us a "more random" start point
       button_state = @dc_kos::get_button_state
 
       # NOTE order is important here.
 
-      # press DOWN and B to quit
-      return QUIT if @dc_kos::dpad_down?(button_state) && @dc_kos::btn_b?(button_state)
+      return QUIT if quit_combination?(previous_state, button_state)
 
       # press STRAT or A to go forward
-      return NEXT_PAGE if @dc_kos::btn_start?(button_state) || @dc_kos::btn_a?(button_state)
+      return NEXT_PAGE if start_or_a_pressed?(previous_state, button_state)
 
       # press B to go back
-      return PREVIOUS_PAGE if @dc_kos::btn_b?(button_state)
+      return PREVIOUS_PAGE if b_pressed?(previous_state, button_state)
 
       # left and right on dpad for skipping or rewinding the time indicator
-      return FWD if @dc_kos::dpad_right?(button_state)
-      return REW if @dc_kos::dpad_left?(button_state)
+      return FWD if right_pressed?(previous_state, button_state)
+      return REW if left_pressed?(previous_state, button_state)
+
+      previous_state = button_state
     end
+  end
+
+  # press DOWN and B to quit
+  def quit_combination?(previous, current)
+    !(@dc_kos::dpad_down?(previous) && @dc_kos::btn_b?(previous)) &&
+      (@dc_kos::dpad_down?(current) && @dc_kos::btn_b?(current))
+  end
+
+  def start_or_a_pressed?(previous, current)
+    (!@dc_kos::btn_start?(previous) && @dc_kos::btn_start?(current)) ||
+      (!@dc_kos::btn_a?(previous) && @dc_kos::btn_a?(current))
+  end
+
+  def b_pressed?(previous, current)
+    !@dc_kos::btn_b?(previous) && @dc_kos::btn_b?(current)
+  end
+
+  def b_pressed?(previous, current)
+    !@dc_kos::btn_b?(previous) && @dc_kos::btn_b?(current)
+  end
+
+  def right_pressed?(previous, current)
+    !@dc_kos::dpad_right?(previous) && @dc_kos::dpad_right?(current)
+  end
+
+  def left_pressed?(previous, current)
+    !@dc_kos::dpad_left?(previous) && @dc_kos::dpad_left?(current)
   end
 end
