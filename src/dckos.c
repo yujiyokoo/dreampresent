@@ -34,7 +34,7 @@ static mrb_value read_whole_txt_file(mrb_state *mrb, mrb_value self) {
   *result = '\0';
 
   mrb_get_args(mrb, "S", &m_path);
-  path = mrb_str_to_cstr(mrb, m_path); // no need to free this
+  path = mrb_str_to_cstr(mrb, m_path);
   f = fs_open(path, O_RDONLY);
 
   if(f < 0) {
@@ -44,17 +44,18 @@ static mrb_value read_whole_txt_file(mrb_state *mrb, mrb_value self) {
 
   while((length = fs_read(f, buffer, 2048))) {
     printf("read %i chars into buf.\n", length);
-    result = realloc(result, strlen(result) + length);
+    result = mrb_realloc(mrb, result, strlen(result) + length);
     strncat(result, buffer, length);
   }
 
   fs_close(f);
+  mrb_value whole_str_mrb = mrb_str_new_cstr(mrb, result);
+  mrb_free(mrb, result);
 
-  return mrb_str_new_cstr(mrb, result);
-  // TODO: freeing?
+  return whole_str_mrb;
 }
 
-static mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
+mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
   maple_device_t *cont1;
   cont_state_t *state;
   if((cont1 = maple_enum_type(0, MAPLE_FUNC_CONTROLLER))){
@@ -64,44 +65,44 @@ static mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value check_btn(mrb_state *mrb, mrb_value self, uint16 target) {
+mrb_value check_btn(mrb_state *mrb, mrb_value self, uint16 target) {
   struct mrb_value state;
   mrb_get_args(mrb, "i", &state);
 
   return mrb_bool_value(mrb_fixnum(state) & target);
 }
 
-static mrb_value btn_start(mrb_state *mrb, mrb_value self) {
+mrb_value btn_start(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_START);
 };
 
-static mrb_value btn_a(mrb_state *mrb, mrb_value self) {
+mrb_value btn_a(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_A);
 };
 
-static mrb_value btn_b(mrb_state *mrb, mrb_value self) {
+mrb_value btn_b(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_B);
 };
 
-static mrb_value dpad_down(mrb_state *mrb, mrb_value self) {
+mrb_value dpad_down(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_DOWN);
 };
 
-static mrb_value dpad_right(mrb_state *mrb, mrb_value self) {
+mrb_value dpad_right(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_RIGHT);
 };
 
-static mrb_value dpad_left(mrb_state *mrb, mrb_value self) {
+mrb_value dpad_left(mrb_state *mrb, mrb_value self) {
   return check_btn(mrb, self, CONT_DPAD_LEFT);
 };
 
-static mrb_value draw_str(mrb_state *mrb, mrb_value self) {
+mrb_value draw_str(mrb_state *mrb, mrb_value self) {
   char *unwrapped_content;
   mrb_value str_content;
   mrb_int x, y;
 
   mrb_get_args(mrb, "Sii", &str_content, &x, &y);
-  unwrapped_content = mrb_str_to_cstr(mrb, str_content); // no need to free this
+  unwrapped_content = mrb_str_to_cstr(mrb, str_content);
   printf("%s\n", unwrapped_content);
 
   bfont_draw_str(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0, unwrapped_content);
@@ -109,12 +110,12 @@ static mrb_value draw_str(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-static mrb_value console_print(mrb_state *mrb, mrb_value self) {
+mrb_value console_print(mrb_state *mrb, mrb_value self) {
   char *unwrapped_content;
   mrb_value str_content;
 
   mrb_get_args(mrb, "S", &str_content);
-  unwrapped_content = mrb_str_to_cstr(mrb, str_content); // no need to free this
+  unwrapped_content = mrb_str_to_cstr(mrb, str_content);
   printf("%s\n", unwrapped_content);
 
   return mrb_nil_value();
@@ -201,7 +202,7 @@ mrb_value load_png(mrb_state *mrb, mrb_value self) {
   char *c_png_path;
 
   mrb_get_args(mrb, "Siiii", &png_path, &x1, &y1, &x2, &y2);
-  c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this
+  c_png_path = mrb_str_to_cstr(mrb, png_path);
 
   _display_png_file(c_png_path, x1, y1, x2, y2);
 
@@ -216,7 +217,7 @@ mrb_value render_png(mrb_state *mrb, mrb_value self) {
   kos_img_t img;
 
   mrb_get_args(mrb, "Sii", &png_path, &base_x, &base_y);
-  c_png_path = mrb_str_to_cstr(mrb, png_path); // no need to free this?
+  c_png_path = mrb_str_to_cstr(mrb, png_path);
   printf("---- got path: %s \n", c_png_path);
 
   png_to_img(c_png_path, 1, &img);
