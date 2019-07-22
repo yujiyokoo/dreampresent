@@ -22,6 +22,8 @@ class DcKosRb
       case colour
       when 'red'
          [255, 0, 0]
+      when 'yellow'
+         [255, 255, 0]
       else # unknown colours default to white
          [255, 255, 255]
       end
