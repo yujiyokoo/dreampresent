@@ -112,9 +112,9 @@ class WaitButtonContent
   end
 end
 
-class DrawHorizontalLineContent
-  def initialize(x, y, len, colour)
-    @x, @y, @len, @colour = x, y, len, colour.strip.downcase
+class HorizontalLineContent
+  def initialize(x, y, len, width, colour)
+    @x, @y, @len, @width, @colour = x, y, len, width, colour.strip.downcase
   end
 
   def render(dc_kos, _presentation_state)
@@ -126,7 +126,9 @@ class DrawHorizontalLineContent
       [255, 255, 255]
     end
 
-    dc_kos.draw_horizontal_line(@x, @y, @len, r, g, b)
+    (0...@width).each do |offset|
+      dc_kos.draw_horizontal_line(@x, @y + offset, @len, r, g, b)
+    end
     ResultConstants::OK
   end
 end
@@ -178,12 +180,12 @@ class Parser
     return x.to_i, y.to_i, colour, show_bg, rest
   end
 
-  def parse_line_xy_len_col(line)
+  def parse_line_specification(line)
     split_line = line.split(':')
     tag = split_line[0]
-    _unused, x, y, len = tag.split(',')
+    _unused, x, y, len, width = tag.split(',')
 
-    return x.to_i, y.to_i, len.to_i, split_line[1]
+    return x.to_i, y.to_i, len.to_i, width.to_i, split_line[1]
   end
 
   def parse_line_no_xy(line)
@@ -220,8 +222,8 @@ class Parser
         when section.slice(0,4) == 'wait'
           WaitButtonContent.new
         when section.slice(0,4) == 'line'
-          x, y, len,colour = parse_line_xy_len_col(section)
-          DrawHorizontalLineContent.new(x, y, len,colour)
+          x, y, len, width, colour = parse_line_specification(section)
+          HorizontalLineContent.new(x, y, len, width, colour)
         else
           # not sure. keep it as nil
         end
