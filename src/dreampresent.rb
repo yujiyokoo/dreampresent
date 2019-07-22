@@ -3,7 +3,6 @@ class Dreampresent
 
   def initialize(dc_kos)
     @dc_kos = dc_kos
-    @dc_kos.pvr_initialise
   end
 
   def start

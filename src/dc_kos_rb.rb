@@ -1,5 +1,16 @@
+module Commands
+  NEXT_PAGE = 1
+  PREVIOUS_PAGE = -1
+  QUIT = -2
+  FWD = -3
+  REW = -4
+  SWITCH_VIDEO_MODE = -5
+end
+
 # Ruby-level wrapper to DcKos
 class DcKosRb
+  include Commands
+
   def initialize(dc_kos)
     @dc_kos = dc_kos
   end
@@ -49,13 +60,6 @@ class DcKosRb
       fail NoMethodError, "undefined method '#{method}'"
     end
   end
-
-  NEXT_PAGE = 1
-  PREVIOUS_PAGE = -1
-  QUIT = -2
-  FWD = -3
-  REW = -4
-  SWITCH_VIDEO_MODE = -5
 
   def next_or_back
     previous_state = @dc_kos::get_button_state

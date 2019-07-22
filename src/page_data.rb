@@ -104,7 +104,7 @@ class WaitButtonContent
   def render(dc_kos, _presentation_state)
     key_input = dc_kos.next_or_back
 
-    if key_input == dc_kos.class::NEXT_PAGE
+    if key_input == Commands::NEXT_PAGE
       ResultConstants::OK
     else
       key_input
@@ -160,7 +160,7 @@ class Page
       puts "-------- section render result: #{ render_result }"
 
       # return if user pressed PREV, QUIT, etc.
-      return render_result unless [dc_kos.class::NEXT_PAGE, ResultConstants::OK].include?(render_result)
+      return render_result unless [Commands::NEXT_PAGE, ResultConstants::OK].include?(render_result)
     }
 
     # if waiting for input between sections above did not result in returning
