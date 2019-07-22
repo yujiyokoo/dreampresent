@@ -1,14 +1,15 @@
 class Dreampresent
-  attr_reader :screen, :dc_cos
+  attr_reader :dc_cos
 
-  def initialize(screen, dc_kos)
-    @screen = screen
+  def initialize(dc_kos)
     @dc_kos = dc_kos
     @dc_kos.pvr_initialise
   end
 
   def start
     puts "Dreampresent: starting"
-    Presentation.new(@dc_kos, PageData.new(@dc_kos, Time.now).all).run
+    Presentation.new(@dc_kos,
+      PageData.new(@dc_kos, Time.now).all
+    ).run
   end
 end
