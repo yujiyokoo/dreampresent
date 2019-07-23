@@ -112,9 +112,10 @@ class WaitButtonContent
   end
 end
 
-class HorizontalLineContent
-  def initialize(x, y, len, width, colour)
-    @x, @y, @len, @width, @colour = x, y, len, width, colour.strip.downcase
+class LineContent
+  def initialize(direction, x, y, len, width, colour)
+    @direction, @x, @y, @len, @width, @colour =
+      direction, x, y, len, width, colour.strip.downcase
   end
 
   def render(dc_kos, _presentation_state)
@@ -126,8 +127,14 @@ class HorizontalLineContent
       [255, 255, 255]
     end
 
-    (0...@width).each do |offset|
-      dc_kos.draw_horizontal_line(@x, @y + offset, @len, r, g, b)
+    if @direction == :horizontal
+      (0...@width).each do |line_num|
+        dc_kos.draw_horizontal_line(@x, @y + line_num, @len, r, g, b)
+      end
+    elsif @direction == :vertical
+      (0...@width).each do |line_num|
+        dc_kos.draw_vertical_line(@x + line_num, @y, @len, r, g, b)
+      end
     end
     ResultConstants::OK
   end
@@ -221,9 +228,12 @@ class Parser
           PageBaseContent.new(bg_path, page_count, start_time)
         when section.slice(0,4) == 'wait'
           WaitButtonContent.new
-        when section.slice(0,4) == 'line'
+        when section.slice(0,5) == 'hline'
           x, y, len, width, colour = parse_line_specification(section)
-          HorizontalLineContent.new(x, y, len, width, colour)
+          LineContent.new(:horizontal, x, y, len, width, colour)
+        when section.slice(0,5) == 'vline'
+          x, y, len, width, colour = parse_line_specification(section)
+          LineContent.new(:vertical, x, y, len, width, colour)
         else
           # not sure. keep it as nil
         end

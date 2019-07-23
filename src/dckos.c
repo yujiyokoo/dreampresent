@@ -196,6 +196,21 @@ mrb_value draw_horizontal_line(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
+mrb_value draw_vertical_line(mrb_state *mrb, mrb_value self) {
+  mrb_int x, y, len, r, g, b;
+  mrb_get_args(mrb, "iiiiii", &x, &y, &len, &r, &g, &b);
+
+  int curr_y = 0;
+
+  for(curr_y = y; curr_y < y + len; curr_y ++) {
+    if(_is_in_screen(x, curr_y)) {
+      vram_s[curr_y * PX_PER_LINE + x] = PACK_PIXEL(r, g, b);
+    }
+  }
+
+  return mrb_nil_value();
+}
+
 // this uses pvr functions to show max 512x512 image.
 mrb_value load_png(mrb_state *mrb, mrb_value self) {
   mrb_value png_path;
@@ -300,6 +315,7 @@ void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "dpad_left?", dpad_left, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "console_print", console_print, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_horizontal_line", draw_horizontal_line, MRB_ARGS_REQ(6));
+  mrb_define_module_function(mrb, module, "draw_vertical_line", draw_vertical_line, MRB_ARGS_REQ(6));
   mrb_define_module_function(mrb, module, "next_video_mode", next_video_mode, MRB_ARGS_NONE());
 
 }
