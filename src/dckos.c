@@ -44,7 +44,7 @@ static mrb_value read_whole_txt_file(mrb_state *mrb, mrb_value self) {
 
   while((length = fs_read(f, buffer, 2048))) {
     printf("read %i chars into buf.\n", length);
-    result = mrb_realloc(mrb, result, strlen(result) + length);
+    result = mrb_realloc(mrb, result, strlen(result) + length + 1); // 1 for '\0'
     strncat(result, buffer, length);
   }
 
