@@ -1,6 +1,4 @@
 class Dreampresent
-  attr_reader :dc_cos
-
   def initialize(dc_kos)
     @dc_kos = dc_kos
   end
