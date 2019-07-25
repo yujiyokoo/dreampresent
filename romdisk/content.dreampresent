@@ -58,11 +58,6 @@ black background.
 -wait:
 -img,60,180: /rd/example_slide_page.png
 
-#= This presentation
-#-txt,60,30: Dreamcast and mruby
-#-wait:
-#-img,160,300: /rd/mruby_320.png
-
 = What is Dreamcast?
 -wait:
 -txt,60,30: - Sega's current video game console
