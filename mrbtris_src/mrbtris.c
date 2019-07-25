@@ -8,6 +8,17 @@
 
 #define PACK_PIXEL(r, g, b) ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)  )
 
+mrb_value clear_screen(mrb_state *mrb, mrb_value self) {
+  int x = 0, y = 0;
+  for(y = 0; y < 480 ; y ++ ) {
+    for(x = 0; x < 640 ; x ++ ) {
+      vram_s[x + y * 640] = PACK_PIXEL(0, 0, 0);
+    }
+  }
+
+  return mrb_nil_value();
+}
+
 mrb_value put_pixel640(mrb_state *mrb, mrb_value self) {
   mrb_int x, y, r, g, b;
   mrb_get_args(mrb, "iiiii", &x, &y, &r, &g, &b);
@@ -164,4 +175,5 @@ void define_game_module_functions(mrb_state* mrb, struct RClass* module) {
     mrb_define_module_function(mrb, module, "dpad_down?", dpad_down, MRB_ARGS_REQ(1));
     mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
     mrb_define_module_function(mrb, module, "btn_b?", btn_b, MRB_ARGS_REQ(1));
+    mrb_define_module_function(mrb, module, "clear_screen", clear_screen, MRB_ARGS_NONE());
 }

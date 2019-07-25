@@ -17,7 +17,6 @@ class BoardState
   LEFT_AND_RIGHT_BLOCKS = ([:grey] + [false] * 10 + [:grey]).freeze
   HORIZONTAL_WALL = ([:grey]*12).freeze
 
-  # note that board starts from -1 to allow easy comparison when block gets to the left all
   EMPTY_BOARD =
     [ HORIZONTAL_WALL ] +
     [ LEFT_AND_RIGHT_BLOCKS ] * 20 +
@@ -51,6 +50,7 @@ class BoardState
     }
     scores = [0, 1, 2, 3, 8]
     @score += scores[fr_idxs.size]
+    fr_idxs.size
   end
 
   def save_to_board
@@ -206,7 +206,15 @@ class BoardState
   def erase_last_pos
     @shape[@last_shape_orientation].each_with_index { |row, rownum|
       row.each_with_index { |cell, colnum|
-        @screen.draw_black_square(@last_x+colnum, @last_y+rownum, false) if cell
+        @screen.draw_black_square(@last_x+colnum, @last_y+rownum, false) if cell && cell != @shape[@shape_orientation]
+      }
+    }
+  end
+
+  def whiten_curr_pos
+     @shape[@shape_orientation].each_with_index { |row, rownum|
+      row.each_with_index { |_cell, colnum|
+        @screen.draw_colour_square(@x+colnum, @y+rownum, :white, false) if _cell
       }
     }
   end
@@ -317,8 +325,8 @@ class GameState
       unless (@board_state.moved_horizontal? || @board_state.rotated?)
         @board_state.move_left if dc2d.dpad_left?(button_state) && first_press_or_held_long
         @board_state.move_right if dc2d.dpad_right?(button_state) && first_press_or_held_long
-        @board_state.clockwise if dc2d.btn_a?(button_state) && first_press_or_held_long
-        @board_state.anticlockwise if dc2d.btn_b?(button_state) && first_press_or_held_long
+        @board_state.clockwise if dc2d.btn_a?(button_state) && first_press
+        @board_state.anticlockwise if dc2d.btn_b?(button_state) && first_press
       end
 
       unless @board_state.moved_vertical?
@@ -335,8 +343,8 @@ class GameState
     @button_state_unchanged_for == 0 || @button_state_unchanged_for > 9
   end
 
-  def board
-    @board_state.board
+  def first_press
+    @button_state_unchanged_for == 0
   end
 end
 
@@ -359,22 +367,21 @@ class MainGame
   end
 
   def main_loop
+    @dc2d::clear_screen()
     @dc2d::clear_score(@score)
 
+    @screen.draw_board(SOLID_BOARD_BEFORE_START)
     while true do # 'main loop'
-      @screen.draw_board(SOLID_BOARD_BEFORE_START)
-
       wait_for_start_button
       running = true
 
       @game_state.reset
 
-      @screen.draw_board(@game_state.board)
+      @screen.draw_board(@game_state.board_state.board)
       @screen.render_upcoming_block_pane(@game_state.board_state)
       @screen.render_score(@game_state.board_state)
 
       while running do
-        # for the moment, let's assume this gives us 50hz...
         @dc2d::waitvbl
         @game_state.increment_frame
 
@@ -401,11 +408,18 @@ class MainGame
           @game_state.board_state.move_down
         else
           @game_state.board_state.save_to_board
+          @game_state.board_state.whiten_curr_pos
           @game_state.board_state.clear_full_rows
-          @screen.draw_board(@game_state.board_state.board)
+          @screen.draw_board(@game_state.board_state.board) # re-render whole board
 
           @game_state.board_state.next_block(4, 0)
-          running = false unless @game_state.board_state.can_drop?
+          if !@game_state.board_state.can_drop?
+            # Stacked to the top...
+            running = false
+            @game_state.board_state.move_down!
+            @game_state.board_state.save_to_board
+            @screen.draw_board(@game_state.board_state.board) # re-render whole board with finished state
+          end
           @game_state.board_state.move_down!
 
           @screen.render_upcoming_block_pane(@game_state.board_state)
