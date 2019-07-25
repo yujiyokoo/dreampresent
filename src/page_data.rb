@@ -95,7 +95,7 @@ class PageBaseContent
     pos_x = PROGRESS_LEN if pos_x > PROGRESS_LEN
     pos_x = 0 if pos_x < 0
 
-    dc_kos.render_png("/rd/swirl_red_32x28.png", pos_x, PROGRESS_Y_POS)
+    dc_kos.render_png("/rd/mruby_logo_32x35.png", pos_x, PROGRESS_Y_POS)
   end
 end
 
