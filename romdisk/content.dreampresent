@@ -45,7 +45,7 @@
 -txt,60,180: - Features
    - Text
    - PNG images (no resizing yet...)
-   - Time / page progress 
+   - Time / page progress
    - Lines (horizontal & vertical)
    - Go back / forward
    - Not so much safety checking!
@@ -65,6 +65,7 @@ black background.
 #-img,160,300: /rd/mruby_320.png
 
 = What is Dreamcast?
+-wait:
 -txt,60,30: - Sega's current video game console
 -wait:
 -hline,176,42,86,3:red
@@ -97,7 +98,7 @@ black background.
   - Peripherals are hard to get
   - No app store or Internet-based distribution
     channel
-  - Sometimes 404 or no domain any more...
+  - Lots of lost information
 
 = How does Dreamcast compare with current consoles?
 -img,10,60: /rd/Dreamcast.png
@@ -118,9 +119,6 @@ Blu-ray drive
 
 = What is mruby?
 -wait:
--txt,60,30:
- - You probably know it, or at least heard of it
--wait:
 -txt,60,60:
  - Lightweight Ruby implementation
  - For embedding
@@ -134,10 +132,25 @@ Blu-ray drive
 
 = The advantage of using mruby
 
--txt,40,40:Main logic in Ruby!
-String manipulation for example, is not easy in C
 -wait:
--img,100,100: /rd/git_log_memory_bug.png
+-txt,40,40:Main logic in Ruby! Fun!
+-wait:
+-txt,40,70:Less bugs: For example,
+string manipulation is not easy in C
+-wait:
+-img,200,100: /rd/git_log_memory_bug.png
+
+= Which language to use?
+-txt,40,40:The basic rule:
+
+Write all code in Ruby
+-wait:
+-txt,40,130:...unless that is not feasible.
+-wait:
+-txt,40,190:Use C where necessary, particularly to
+get down to lower-level operations.
+
+= What is KallisitiOS?
 
 = Dreamcast homebrew development steps overview
 -txt,30,40,white,yes:[ C code ]
@@ -154,6 +167,7 @@ String manipulation for example, is not easy in C
 -txt,300,185,white,yes:[ KOS DC library (SH4) ]
 -wait:
 -txt,30,230,white,yes:[ Executable (.elf) ]
+-wait:
 -txt,270,230,white: *runnable on Dreamcast
 -wait:
 -txt,70,260,yellow:|
@@ -200,7 +214,7 @@ String manipulation for example, is not easy in C
 -txt,178,265,white:<--- objcopy, scramble, make image
 -wait:
 -txt,30,310,white,yes:[ Disc image (.cdi) ]
-- wait:
+-wait:
 -hline,156,34,264,4:red
 -vline,156,34,40,4:red
 -vline,416,34,40,4:red
@@ -248,6 +262,7 @@ String manipulation for example, is not easy in C
 -txt,440,310,white,yes:<- and start
 
 = Calling KOS functions
+-bkg: /rd/bg_dark.png
 -txt,30,30:Example: Reading controller buttons
 -img,40,80: /rd/dc_controller.png
 -wait:
@@ -285,6 +300,16 @@ String manipulation for example, is not easy in C
 -wait:
 -txt,220,260,white,yes:^bitwise AND operation
 
+= Presentation class
+-img,40,40: /rd/presentation_rb.png
+-wait:
+-txt,320,180,white,yes:<- main loop
+-wait:
+-txt,460,210,white,yes:<- render and
+-txt,410,240,white,yes:   wait for input
+-wait:
+-txt,340,280,white,yes:<- adjust values
+
 = Calling KOS functions
 -txt,40,40:From Ruby:
 -img,40,120: /rd/start_on.png
@@ -293,26 +318,21 @@ String manipulation for example, is not easy in C
 -img,40,80: /rd/vram_s_manipulation.png
 -wait:
 -hline,84,208,408,4:red
--txt,300,220,white,yes:^manipulating vram 
+-txt,300,220,white,yes:^manipulating vram
 = Another example, game main loop
 -img,40,40: /rd/mrbtris_mainloop.png
 -wait:
 -txt,370,90,white,yes:<- outer loop
--txt,260,120,white,yes:<- PRESS START!
--txt,340,180,white,yes:<- draw initial board
--txt,220,220,white,yes:<- inner loop for single round
--txt,300,290,white,yes:<- update board for input
--txt,300,320,white,yes:<- only drop every 3 frames
--txt,430,350,white,yes:<- game logic
-   continues...
-
-= Presentation class
--img,40,40: /rd/presentation_rb.png
 -wait:
--txt,320,180,white,yes:<- main loop
--txt,460,210,white,yes:<- render and
--txt,410,240,white,yes:   wait for input
--txt,340,280,white,yes:<- adjust values
+-txt,260,120,white,yes:<- PRESS START!
+-wait:
+-txt,340,180,white,yes:<- draw initial board
+-wait:
+-txt,220,220,white,yes:<- inner loop for single round
+-wait:
+-txt,300,290,white,yes:<- update board for input
+-txt,430,320,white,yes:<- game logic
+   continues...
 
 = Where to run/test
 -txt,40,60:Actual Dreamcast unit is the best.
@@ -325,7 +345,7 @@ However, emulator is handy too.
  - compatibility issues
  - "not the same"
 -wait:
--txt,40,160: - but, there STDOUT (also w/ serial or ip)
+-txt,40,160: - but, there is STDOUT (also w/ serial or ip)
 
 = Console (emulator/ip/serial)
 -txt,40,30: with emulators, console output is available
@@ -334,22 +354,26 @@ However, emulator is handy too.
 = Getting the program onto Dreamcast
 -txt,40,40:Code must be cross-compiled on host,
 then put on the unit... but how?
+-wait:
 -txt,40,100:"Is there a USB Port?"
+-wait:
 -txt,40,130:"No. There's a serial port at the back."
+-wait:
 -txt,40,160:"It WAS 1998."
 -wait:
--txt,40,200: Option 1. Use CD-Rs
+-txt,40,200: 1. Use CD-Rs
 -wait:
--txt,40,230: Option 2. Use SDs with software for loading from SD
+-txt,40,230: 2. Use SDs with SD loader software
 -wait:
--txt,40,250: Option 3. Use Broadband Adapters (BBAs) with ip loader
+-txt,40,260: 3. Use Broadband Adapters (BBAs) with ip loader
 -wait:
--txt,40,280: Option 4. Use serial cable (DC coder's cable)
+-txt,40,290: 4. Use serial cable (DC coder's cable)
   with serial loader
 
 = Getting the program onto Dreamcast
 -txt,40,40:
-CD-Rs are expensive. CD-RW may work, but I've never tried.
+CD-Rs are expensive.
+CD-RW may work, but I've never tried.
 Either way, it takes a lot of time.
 
 SDs also takes a lot of time.
@@ -359,19 +383,13 @@ BBAs are expensive.
 = Getting the program onto Dreamcast
 -img,40,40: /rd/bba_ebay.png
 
-= Select communication method
--txt,180,210:Maybe I can use serial!
-
-= Sourcing the serial cable
--txt,40,40:"get serial cables from liksang.com"
--wait:
--img,120,70: /rd/liksang.png
--wait:
--txt,290,388,white,yes:<- "Defunct"
+= Getting the program onto Dreamcast
+-txt,80,210:So I decided to try the serial port
 
 = Building the serial cable
 -txt,40,40:The serial cable could be built
 from components.
+
 The DC serial connectors are available from
 Neo-Geo Pocket to DC cables.
 
@@ -388,9 +406,6 @@ An SD card reader costs about AUD20...
 
 -wait:
 -img,110,60: /rd/soldered_connector.png
-
--wait:
--img,110,60: /rd/max3222.png
 
 = Building the serial cable
 -txt,40,40:It took a while (2 full days)
@@ -434,3 +449,8 @@ An SD card reader costs about AUD20...
   by Evan-Amos under CC BY-SA 3.0.
   Cropped and resized by Yuji Yokoo.
 
+= More information
+-txt,30,80:Development environment:
+https://gitlab.com/yujiyokoo/mruby-dreamcast
+-txt,30,160:Example game:
+https://gitlab.com/yujiyokoo/mrbtris-dreamcast
