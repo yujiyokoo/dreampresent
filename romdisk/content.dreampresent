@@ -144,7 +144,7 @@ Write all code in Ruby
 -txt,40,190:Use C where necessary, particularly to
 get down to lower-level operations.
 
-= What is KallisitiOS?
+= What is KallistiOS?
 
 -txt,40,80:KallistiOS, aka KOS ("chaos").
 Technically cross platform.
@@ -445,12 +445,14 @@ An SD card reader costs about AUD20...
   Cropped and resized by Yuji Yokoo.
 
 = More information
--txt,30,80:Development environment:
+-txt,10,40:Development environment:
 https://gitlab.com/yujiyokoo/mruby-dreamcast
--txt,30,160:Example game:
+-txt,10,120:Example game:
 https://gitlab.com/yujiyokoo/mrbtris-dreamcast
--txt,30,240:Dreampresent:
+-txt,10,200:Dreampresent:
 https://gitlab.com/yujiyokoo/dreampresent
--txt,30,320:Serial cable info:
-https://gitlab.com/yujiyokoo/dreamcast-coders-serial-cable-construction
+-txt,10,280:Serial cable construction info:
+https://gitlab.com/yujiyokoo/dreamcast-serial-cable
+
+-txt,80,360:Ask me anything: @yujiyokoo on Twitter
 
