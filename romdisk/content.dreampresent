@@ -260,7 +260,6 @@ etc.
 -img,40,40: /rd/mrb_compiled.png
 
 = Calling KOS functions
--bkg: /rd/bg_dark.png
 -txt,30,30:Example: Reading controller buttons
 -img,40,80: /rd/dc_controller.png
 -wait:
