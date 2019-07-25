@@ -1,11 +1,13 @@
 TARGET = dreampresent.elf
 
-OBJS = src/dreampresent.o src/main.o romdisk.o src/dckos.o
+OBJS = src/dreampresent.o src/main.o romdisk.o src/dckos.o mrbtris_src/game.o mrbtris_src/mrbtris.o
 
 # order here is important!
 MRB_SOURCES = src/dc_kos_rb.rb src/page_data.rb src/presentation.rb src/dreampresent.rb src/start.rb
+GAME_SOURCES = mrbtris_src/block_shapes.rb mrbtris_src/game.rb
 
 MRB_BYTECODE = src/dreampresent.c
+GAME_BYTECODE = mrbtris_src/game.c
 
 KOS_ROMDISK_DIR = romdisk
 
@@ -16,16 +18,19 @@ all: rm-elf $(TARGET)
 include $(KOS_BASE)/Makefile.rules
 
 clean:
-	-rm -f $(TARGET) $(OBJS) romdisk.* $(MRB_BYTECODE)
+	-rm -f $(TARGET) $(OBJS) romdisk.* $(MRB_BYTECODE) $(GAME_BYTECODE)
 
 rm-elf:
 	-rm -f $(TARGET) romdisk.*
 
-$(TARGET): $(OBJS) $(MRB_BYTECODE)
+$(TARGET): $(OBJS) $(MRB_BYTECODE) $(GAME_BYTECODE)
 	kos-cc $(CFLAGS) -o $(TARGET) $(OBJS) -lmruby -lmruby_core -lm -lpng -lkosutils -lz
 
 $(MRB_BYTECODE): src/dreampresent.rb
 	/vagrant/src/mruby-host/bin/mrbc -g -Bdreampresent_bytecode -o src/dreampresent.c $(MRB_SOURCES)
+
+$(GAME_BYTECODE): mrbtris_src/game.rb
+	/vagrant/src/mruby-host/bin/mrbc -g -Bgame -o mrbtris_src/game.c $(GAME_SOURCES)
 
 run: $(TARGET)
 	$(KOS_LOADER) $(TARGET)

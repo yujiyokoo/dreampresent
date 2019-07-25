@@ -2,6 +2,7 @@
 #include <mruby.h>
 #include <mruby/irep.h>
 #include "dckos.h"
+#include "../mrbtris_src/mrbtris.h"
 
 /* These macros tell KOS how to initialize itself. All of this initialization
    happens before main() gets called, and the shutdown happens afterwards. So
@@ -23,6 +24,7 @@ extern uint8 romdisk[];
 KOS_INIT_ROMDISK(romdisk);
 
 extern const uint8_t dreampresent_bytecode[]; // compiled ruby code
+extern const uint8_t game[]; // game
 
 int main(int argc, char **argv) {
     vid_set_mode(DM_640x480_VGA, PM_RGB565);
@@ -34,6 +36,12 @@ int main(int argc, char **argv) {
     struct RClass *dc_kos = mrb_define_module(mrb, "DcKos");
 
     define_module_functions(mrb, dc_kos);
+
+    struct RClass *dc2d_module = mrb_define_module(mrb, "Dc2d");
+
+    define_game_module_functions(mrb, dc2d_module);
+
+    mrb_load_irep(mrb, game);
 
     mrb_load_irep(mrb, dreampresent_bytecode);
 

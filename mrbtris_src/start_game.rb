@@ -1,6 +1,4 @@
 begin
-  puts 'Starting presentation.'
-  Dreampresent.new(DcKosRb.new(DcKos)).start
   puts 'Starting the game.'
   MainGame.new(Screen, Dc2d).main_loop
 rescue => ex
