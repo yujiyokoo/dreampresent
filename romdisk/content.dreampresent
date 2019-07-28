@@ -32,6 +32,19 @@
 = Adelaide, Australia
 -img,140,40: /rd/adelaide_and_taipei.png
 
+= Table of Contents
+-txt,40,40: - About this app
+ - What is Dreamcast?
+ - What is mruby?
+ - What is KallistiOS
+ - Homebrew Development Steps
+ - Presentation app code overview
+ - Emulator and real unit
+ - Getting the program to the unit
+ - Future directions / TODOs
+ - Thanks and info
+ - Demo
+
 = This application
 -txt,60,60:Dreampresent
 -wait:
@@ -416,9 +429,12 @@ An SD card reader costs about AUD20...
 -img,30,30: /rd/DCToSerial.png
 
 =
--txt,180,200:After days, it all worked!
+-txt,80,200:After many days, it all worked!
+
+=
+-txt,80,200:Now you have all the knowledge needed!
 -wait:
--txt,180,230:But I still bought a BBA
+-txt,80,230:(except a lot of details)
 
 = Future directions / TODO
 -txt,40,40: - more convenient setup
