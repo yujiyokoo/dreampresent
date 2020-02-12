@@ -9,7 +9,7 @@ MRB_BYTECODE = src/dreampresent.c
 
 KOS_ROMDISK_DIR = romdisk
 
-CFLAGS = -I/vagrant/src/mruby-sh4/include/ -L/vagrant/src/mruby-sh4/build/host/lib/
+CFLAGS = -I/usr/src/mruby-sh4/include/ -L/usr/src/mruby-sh4/build/host/lib/
 
 all: rm-elf $(TARGET)
 
@@ -25,7 +25,7 @@ $(TARGET): $(OBJS) $(MRB_BYTECODE)
 	kos-cc $(CFLAGS) -o $(TARGET) $(OBJS) -lmruby -lmruby_core -lm -lpng -lkosutils -lz
 
 $(MRB_BYTECODE): src/dreampresent.rb
-	/vagrant/src/mruby-host/bin/mrbc -g -Bdreampresent_bytecode -o src/dreampresent.c $(MRB_SOURCES)
+	/usr/src/mruby-host/bin/mrbc -g -Bdreampresent_bytecode -o src/dreampresent.c $(MRB_SOURCES)
 
 run: $(TARGET)
 	$(KOS_LOADER) $(TARGET)
