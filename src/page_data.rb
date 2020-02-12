@@ -87,7 +87,7 @@ class PageBaseContent
   end
 
   def render_timer_progress(dc_kos, start_time, time_adjustment)
-    DURATION = 35 * 60 # 35 mins
+    DURATION = 13 * 60 # 13 mins
     PROGRESS_LEN = 640 - 32
     PROGRESS_Y_POS = 440
 

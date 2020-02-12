@@ -5,78 +5,59 @@
 
 =
 -bkg: /rd/bg_dark.png
--txt,60,30:Developing Dreamcast games with mruby
+-txt,60,30:Gentle introduction to
+    Dreamcast programming with mruby
 -txt,60,120:Yuji Yokoo - @yujiyokoo
 -txt,120,260:PRESS START!
-
--wait:
--txt,370,52,red:^
--txt,330,64,red:and apps!
 
 = About me
 -txt,60,30:Yuji Yokoo
   Web dev. Loves Ruby.
-  Currently uses: Ruby/Elixir/F#/Elm/Kotlin
+  Currently uses: Elixir/F#/Elm/Ruby
   Formerly: Windows desktop application
     developer (MFC/Win32)
+  From: Tokyo, Japan
+  Lives in: Adelaide, South Australia
 -img,60,260: /rd/yuji_avatar.png
-
-= About me
--txt,60,30:Yuji Yokoo
-  From: Tokyo, Japan.
-    Living in: Adelaide, Australia.
-  First time in Taiwan!
-  First time conference speaker!
--img,60,260: /rd/yuji_avatar.png
-
-= Adelaide, Australia
--img,140,40: /rd/adelaide_and_taipei.png
 
 = Table of Contents
--txt,40,40: - About this app
+-txt,40,40: - What is mruby?
  - What is Dreamcast?
- - What is mruby?
- - What is KallistiOS
- - Homebrew Development Steps
- - Presentation app code overview
- - Emulator and real unit
- - Getting the program to the unit
- - Future directions / TODOs
+ - How do you develop a DC game/app?
+ - ...and with mruby?
+ - Running the app
  - Thanks and info
  - Demo
 
-= This application
--txt,60,60:Dreampresent
+= What is mruby?
 -wait:
--txt,60,90: - Presentation app
--wait:
--txt,60,120: - Runs on DC
--wait:
--txt,60,150: - It's a live demo
--wait:
--txt,60,180: - Features
-   - Text
-   - PNG images (no resizing yet...)
-   - Time / page progress
-   - Lines (horizontal & vertical)
-   - Go back / forward
-   - Not so much safety checking!
+-txt,30,30:
+ - Lightweight Ruby *implementation*
+ - Ruby 1.9 syntax, with mostly ISO standard
+ - For embedding
+ - Easy to compile and link into C
 
-= Example Slide
--bkg: /rd/bg_dark.png
--txt,60,30,white,yes:Example text with
-black background.
--txt,60,100,yellow: Here's yellow text
--hline,60,150,300,5:red
+-txt,30,210:
+ "mruby is the lightweight implementation of the
+  Ruby language complying with part of the ISO
+  standard. mruby can be linked and embedded
+  within your application."
+
+= The advantage of using mruby
 -wait:
--img,60,180: /rd/example_slide_page.png
+-txt,40,40:- Main logic in Ruby! Fun!
+-wait:
+-txt,40,70:- (Personally) more productive
+-wait:
+-txt,40,100:- Easy integration with C
+  Use C where necessary, particularly to
+  get down to lower-level operations.
 
 = What is Dreamcast?
 -wait:
 -txt,60,30: - Sega's current video game console
 -wait:
 -hline,176,42,86,3:red
--txt,176,60:latest
 -wait:
 -txt,60,90: - Released in 1998
    - Hitachi SH4 at 200MHz
@@ -90,79 +71,27 @@ black background.
 = Why Dreamcast?
 -txt,60,30:
  - 2018 was the 20th anniversary year
- - I had one still working from 2002
  - Dreamcast is still loved by many!
  - Dreamcast runs custom code with no mods*
  - Dreamcast has strong indie/homebrew culture
- - Dreamcast has good OSS for homebrew
+ - Dreamcast has great software tools
 
 -txt,30,330: *assuming you have consoles produced
   in 1998, 1999, or early 2000
 
-= What is not so good with Dreamcast today?
--txt,60,60:
+= What are some disadvantages of Dreamcast today?
+-txt,60,30:
   - No more units produced
-  - Peripherals are hard to get
+  - Peripherals are hard/expensive to get
   - No app store or Internet-based
     distribution channel
-  - Lots of lost information
 
-= How does Dreamcast compare with current consoles?
--img,10,60: /rd/Dreamcast.png
--txt,10,210:
-Dreamcast
-Hitachi SH4 at 200MHz
-NEC PowerVR2
-16MB RAM + 8MB Video RAM
-GD-ROM drive
-
--img,330,60: /rd/PS4.png
--txt,330,210:
-PlayStation4
-AMD Jaguar at 1.6GHz
-AMD Radeon GCN
-8GB RAM
-Blu-ray drive
-
-= What is mruby?
--wait:
--txt,60,60:
- - Lightweight Ruby implementation
- - For embedding
- - Easy to compile and link into C
-
--txt,30,210:
- "mruby is the lightweight implementation of the
-  Ruby language complying with part of the ISO
-  standard. mruby can be linked and embedded
-  within your application."
-
-= The advantage of using mruby
-
--wait:
--txt,40,40:Main logic in Ruby! Fun!
--wait:
--txt,40,70:Less bugs: For example,
-string manipulation is not easy in C
--wait:
--img,50,200: /rd/git_log_memory_bug.png
-
-= Which language to use?
--txt,40,40:Rule of thumb:
-
-Write all code in Ruby
--wait:
--txt,40,130:...unless that is not feasible.
--wait:
--txt,40,190:Use C where necessary, particularly to
-get down to lower-level operations.
-
-= What is KallistiOS?
+= KallistiOS
 
 -txt,40,80:KallistiOS, aka KOS ("chaos").
 Technically cross platform.
 
-Wikipedia has:
+Wikipedia:
 "KallistiOS is a free, BSD license-based
  development system for the Sega Dreamcast
  game console."
@@ -171,8 +100,7 @@ Wikipedia has:
 It comes with cross compilers, linkers, libraries
 etc.
 
-
-= Dreamcast homebrew development steps overview
+= Dreamcast homebrew development steps
 -txt,30,40,white,yes:[ C code ]
 -wait:
 -txt,70,70,yellow:|
@@ -196,7 +124,7 @@ etc.
 -wait:
 -txt,30,320,white,yes:[ Disc image (.cdi) ]
 
-= Dreamcast Homebrew Development Steps with mruby
+= Dreamcast homebrew development steps with mruby
 -txt,30,40,white,yes:[ c code ]
 -txt,430,40,white,yes:[ mruby code ]
 -wait:
@@ -246,69 +174,21 @@ etc.
 -vline,620,76,188,4:red
 -hline,20,260,604,4:red
 
-= mruby-dreamcast
--img,40,40: /rd/mruby-dreamcast-gitlab.png
-
-= mruby-dreamcast
--txt,40,60:The env is currently not cleanly set up...
--txt,40,90:It also takes a lot of time to build.
--txt,40,120:It also takes a lot of disc space.
--txt,40,150:I'm planning to address these issues.
-
 = Main entry point
 -img,40,40: /rd/main_c.png
 -wait:
--txt,340,70,white,yes:<- Dreamcast assets
 -txt,420,160,white,yes:<- Dreamcast video
 -wait:
--txt,420,120,white,yes:<- mruby bytecode
--wait:
 -txt,340,220,white,yes:<- init mruby
--txt,420,290,white,yes:<- c functions
 -wait:
 -txt,420,330,white,yes:<- run mruby code
--txt,300,360,white,yes:<- finish
 
 = mruby bytecode
 -img,40,40: /rd/mrb_compiled.png
 
 = Calling KOS functions
--txt,30,30:Example: Reading controller buttons
--img,40,80: /rd/dc_controller.png
--wait:
--txt,410,210,yellow,yes:[B Button]
--txt,380,240,yellow,yes:[A Button]
--txt,50,310,yellow,yes:[Left]
--txt,190,310,yellow,yes:[Right]
--txt,120,260,yellow,yes:[Up]
--txt,120,360,yellow,yes:[Down]
--txt,300,340,yellow,yes:[START]
-
-= Calling KOS functions
--txt,30,30:Example: Reading controller buttons
--txt,30,80:KOS button state in 16 bit flags
--img,40,120: /rd/controller_h.png
--wait:
--hline,40,130,240,3:red
--vline,40,130,100,3:red
--hline,40,230,240,3:red
--vline,280,130,100,3:red
-
-= Calling KOS functions
--txt,30,30:Example: Reading controller buttons
--txt,80,200:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--txt,80,230,yellow:                ^ ^ ^ ^ ^ ^ ^
-                R L D U S A B
-
-= Calling KOS functions
 -img,40,30: /rd/dckos_c.png
 -txt,320,414,white,yes:^mruby-callable functions
--wait:
--txt,280,120,white,yes:^Read bus for buttons
-#-wait:
-#-txt,220,320,white,yes:^calling check_btn above
-#-wait:
-#-txt,220,260,white,yes:^bitwise AND operation
 
 = Calling KOS functions
 -txt,40,40:From Ruby:
@@ -323,152 +203,52 @@ etc.
 -txt,360,280,white,yes:create presentation
 -txt,440,310,white,yes:<- and start
 
-= Presentation class
--img,40,40: /rd/presentation_rb.png
+= Running the Dreamcast program
+-txt,40,40:Once built, how do you run it?
+Emulator is great, but not real
 -wait:
--txt,320,180,white,yes:<- main loop
--wait:
--txt,460,210,white,yes:<- render and
--txt,410,240,white,yes:   wait for input
--wait:
--txt,340,280,white,yes:<- adjust values
-
-= Another example, game main loop
--img,40,40: /rd/mrbtris_mainloop.png
--wait:
--txt,370,90,white,yes:<- outer loop
--wait:
--txt,260,120,white,yes:<- PRESS START!
--wait:
--txt,340,180,white,yes:<- draw initial board
--wait:
--txt,220,220,white,yes:<- inner loop for single round
--wait:
--txt,300,290,white,yes:<- update board for input
--txt,430,320,white,yes:<- game logic
-   continues...
-
-= Rendering graphics via VRAM
--txt,40,30: KOS lets us manipulate VRAM directly
--img,40,80: /rd/vram_s_manipulation.png
--wait:
--hline,84,208,408,4:red
--txt,300,220,white,yes:^manipulating vram
-
-= Where to run/test
--txt,40,60:Actual Dreamcast unit is the best.
-However, emulator is handy too.
-
-= Running on the emulator
--txt,40,40: DC emulators are good, but...
- - some are difficult to build/run
- - compatibility issues
- - "not the same"
--wait:
--txt,40,160: - but, there is STDOUT (also w/ serial or ip)
-
-= Console (emulator/ip/serial)
--txt,40,30: with emulators, console output is available
--img,40,70: /rd/emulator_console.png
-
-= Getting the program onto Dreamcast
--txt,40,40:Code must be cross-compiled on host,
-then put on the unit... but how?
--wait:
--txt,40,100:"Is there a USB Port?"
--wait:
--txt,40,130:"No. It was 1998."
--wait:
--txt,40,160:"There's a serial port at the back."
--wait:
--txt,40,200: 1. Use CD-Rs
--wait:
--txt,40,230: 2. Use SDs with SD loader software
--wait:
--txt,40,260: 3. Use Broadband Adapters (BBAs) with ip loader
--wait:
--txt,40,290: 4. Use serial cable (DC coder's cable)
+-txt,40,170: 1. Use CD-Rs
+-txt,40,200: 2. Use SDs with SD loader software
+-txt,40,230: 3. Use Broadband Adapters (BBAs) with ip loader
+-txt,40,260: 4. Use serial cable (DC coder's cable)
   with serial loader
 
 = Getting the program onto Dreamcast
 -txt,40,40:
+There are problems with all of them.
+
 CD-Rs are expensive and time consuming.
 
-SDs also takes a lot of time.
+SDs are cheaper but still tedious.
 
 BBAs are expensive.
 
-= Getting the program onto Dreamcast
--img,40,40: /rd/bba_ebay.png
-
-= Getting the program onto Dreamcast
--txt,80,210:So I decided to try the serial port
-
-= Building the serial cable
--txt,40,40:The serial cable could be built
-from components.
-
-The DC serial connectors are available from
-Neo-Geo Pocket to DC cables.
-
-Available from net auctions?
--wait:
--img,40,0: /rd/dc_ngpocket_ebay.png
-
-= Building the serial cable
--txt,40,40:Alternatively, the SD card reader has a connector
-An SD card reader costs about AUD20...
-
--wait:
--img,0,0: /rd/DCSerialConnector.png
-
--wait:
--img,110,60: /rd/soldered_connector.png
-
-= Finished cable
--img,30,30: /rd/DCToSerial.png
-
-=
--txt,80,200:After many days, it all worked!
+Serial cables need to be built.
 
 =
 -txt,80,200:Now you have all the knowledge needed!
 -wait:
 -txt,80,230:(except a lot of details)
 
-= Future directions / TODO
--txt,40,40: - more convenient setup
-   ...than Vagrant VBox needing 10GB
-   ...and having to build it yourself
- - more documentation - eg. tutorials
- - separate library/mrbgem
- - get someone else to try it
- - more features (sound, PowerVR, VMU)
- - build more demanding games
-
-= Thanks
+= Thanks to
 -txt,40,40:I cannot thank everyone here, but in particular:
  - mruby developers
  - KallistiOS developers
+ - Developers of Dreamcast-related tools
  - Dreamcast Indie and Homebrew communities
    (Simulant in particular)
- - Rubyconf Taiwan
  - Adam Davies, Olly Putland and Paul Fioravanti
+ - RORO Sydney
  - everyone here
 
-* Dreamcast console and controller photos provided
-  by Evan-Amos under CC BY-SA 3.0.
-  Cropped and resized by Yuji Yokoo.
-
 = More information
--txt,10,40:Development environment:
-https://gitlab.com/yujiyokoo/mruby-dreamcast
+-txt,10,40:Dreampresent:
+https://gitlab.com/yujiyokoo/dreampresent
 -txt,10,120:Example game:
 https://gitlab.com/yujiyokoo/mrbtris-dreamcast
--txt,10,200:Dreampresent:
-https://gitlab.com/yujiyokoo/dreampresent
+-txt,10,200:Development environment:
+https://gitlab.com/yujiyokoo/docker-mruby-kos-dc
 -txt,10,280:Serial cable construction info:
 https://gitlab.com/yujiyokoo/dreamcast-serial-cable
 
--txt,80,360:Ask me anything: @yujiyokoo on Twitter
-
+-txt,80,360:Questions? Talk to @yujiyokoo on Twitter
