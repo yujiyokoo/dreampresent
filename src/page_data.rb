@@ -6,12 +6,6 @@ class PresentationState
   end
 end
 
-class BasePage
-  def render_bg(dc_kos)
-    dc_kos.render_png("/rd/test_image.png", 0, 0)
-  end
-end
-
 class ResultConstants
   OK = 0
 end
