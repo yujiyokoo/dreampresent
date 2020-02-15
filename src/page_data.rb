@@ -21,6 +21,55 @@ class PageTitleContent
   end
 end
 
+class CodeContent
+  def initialize(x, y, content, show_bg)
+    @x, @y, @content, @show_bg =
+      x, y, content, show_bg
+  end
+
+  def render(dc_kos, _presentation_state, time_now)
+    content_array = []
+    split_contents = @content.split('"')
+    split_contents.each_with_index do |fragment, idx|
+      quoted = if idx % 2 == 0
+        fragment
+      else
+        '"' + fragment + '"'
+      end
+      content_array << quoted
+    end
+
+    line_count = 0
+    line_start = 0
+    content_array.each_with_index do |content, colour_idx|
+      lines = content.split("\n")
+      puts "lines: "
+      p lines
+      puts "line_count: #{line_count}"
+      puts "line_start: #{line_start}"
+      lines.each_with_index do |line, idx|
+        colour = if colour_idx % 2 == 0
+          render_code(dc_kos, line, @x + line_start * 12, @y + (line_count + idx) * 30, @show_bg)
+        else
+          render_string(dc_kos, line, @x + line_start * 12, @y + (line_count + idx) * 30, @show_bg)
+        end
+        line_start = 0
+      end
+      line_start = lines[-1].to_s.size
+      line_count += content.count("\n")
+    end
+    ResultConstants::OK
+  end
+
+  def render_code(dc_kos, line, x, y, show_bg)
+    dc_kos.draw_str(line, x, y, "white", show_bg)
+  end
+
+  def render_string(dc_kos, line, x, y, show_bg)
+    dc_kos.draw_str(line, x, y, "red", show_bg)
+  end
+end
+
 class TextContent
   def initialize(x, y, content, colour, show_bg)
     @x, @y, @content, @colour, @show_bg =
@@ -260,7 +309,7 @@ class Parser
           WaitButtonContent.new
         when section.slice(0,4) == 'code'
           x, y, lang, text_content = parse_code_line(section)
-          TextContent.new(x, y, text_content, 'white', nil)
+          CodeContent.new(x, y, text_content, nil)
         when section.slice(0,3) == 'txt'
           x, y, colour, show_bg, text_content = parse_line_xy_col_bg(section)
           TextContent.new(x, y, text_content, colour, show_bg)
