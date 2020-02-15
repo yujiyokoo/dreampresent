@@ -13,6 +13,9 @@
 -txt,370,52,red:^
 -txt,330,64,red:and apps!
 
+= Resetting timer internally...
+-resettimer
+
 = About me
 -txt,60,30:Yuji Yokoo
   Web dev. Loves Ruby.

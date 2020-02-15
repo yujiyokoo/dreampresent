@@ -15,7 +15,7 @@ class PageTitleContent
     @content = content
   end
 
-  def render(dc_kos, _presentation_state)
+  def render(dc_kos, _presentation_state, start_time)
     dc_kos.draw_str(@content, 10, 2, 'white', 'yes')
     ResultConstants::OK
   end
@@ -27,7 +27,7 @@ class TextContent
       x, y, content, colour, show_bg
   end
 
-  def render(dc_kos, _presentation_state)
+  def render(dc_kos, _presentation_state, time_now)
     dc_kos.draw_str(@content, @x, @y, @colour, @show_bg)
     ResultConstants::OK
   end
@@ -38,7 +38,7 @@ class ImageContent
     @x, @y, @path = x, y, path.strip
   end
 
-  def render(dc_kos, _presentation_state)
+  def render(dc_kos, _presentation_state, time_now)
     dc_kos.render_png(@path, @x, @y)
     ResultConstants::OK
   end
@@ -47,21 +47,21 @@ end
 # This renders a 'background' with 640x480 image
 # It also renders timer and page progress
 class PageBaseContent
-  def initialize(path, page_count, start_time)
-    @page_count, @start_time = page_count, start_time
+  def initialize(path, page_count)
+    @page_count = page_count
     @path = String(path).strip
     puts "-------- Background. path is: "
     p @path
   end
 
-  def render(dc_kos, presentation_state)
+  def render(dc_kos, presentation_state, start_time)
     if @path && !@path.empty?
       dc_kos.render_png(@path, 0, 0)
     else
       puts "Rendering background image with no path. Skipping."
     end
 
-    render_timer_progress(dc_kos, @start_time, presentation_state.time_adjustment)
+    render_timer_progress(dc_kos, start_time, presentation_state.time_adjustment)
     render_page_progress(dc_kos, @page_count, presentation_state.page_index)
     ResultConstants::OK
   end
@@ -81,6 +81,7 @@ class PageBaseContent
   end
 
   def render_timer_progress(dc_kos, start_time, time_adjustment)
+    puts "#################### start_time: #{start_time}, adj: #{time_adjustment}, now: #{Time.now}"
     DURATION = 35 * 60 # 35 mins
     PROGRESS_LEN = 640 - 32
     PROGRESS_Y_POS = 440
@@ -95,7 +96,7 @@ end
 
 # Wait for A or Start in page to go to next section
 class WaitButtonContent
-  def render(dc_kos, _presentation_state)
+  def render(dc_kos, _presentation_state, time_now)
     key_input = dc_kos.next_or_back
 
     if key_input == Commands::NEXT_PAGE
@@ -112,7 +113,7 @@ class LineContent
       direction, x, y, len, width, colour.strip.downcase
   end
 
-  def render(dc_kos, _presentation_state)
+  def render(dc_kos, _presentation_state, time_now)
     # currently supports 'red'
     # everything else will be white
     r, g, b = if @colour == 'red'
@@ -131,6 +132,16 @@ class LineContent
       end
     end
     ResultConstants::OK
+  end
+end
+
+class TimerReset
+  def initialize(parser)
+    @parser = parser
+  end
+
+  def render(_dc_kos, _presentation_state, time_now)
+    Commands::RESET_TIMER
   end
 end
 
@@ -155,11 +166,11 @@ class Page
     @sections = sections
   end
 
-  def show(dc_kos, presentation_state)
+  def show(dc_kos, presentation_state, start_time)
     puts "------ about to call each on @sections"
     p @sections
     @sections.each { |s|
-      render_result = s.render(dc_kos, presentation_state)
+      render_result = s.render(dc_kos, presentation_state, start_time)
       puts "-------- section render result: #{ render_result }"
 
       # return if user pressed PREV, QUIT, etc.
@@ -195,7 +206,7 @@ class Parser
     return path
   end
 
-  def parse(input_str, start_time)
+  def parse(input_str)
     pages = input_str
       .split("\n")
       .reject { |l| l.slice(0, 1) == '#' } # remove comment lines
@@ -203,7 +214,7 @@ class Parser
       .split("\n=")
 
     page_count = pages.size
-    last_background = [PageBaseContent.new(nil, page_count, start_time)]
+    last_background = [PageBaseContent.new(nil, page_count)]
 
     page_objs = pages.map { |page|
       parsed_page = page.split("\n-").each_with_index.map { |section, idx|
@@ -219,7 +230,7 @@ class Parser
           ImageContent.new(x, y, image_path)
         when section.slice(0,3) == 'bkg'
           bg_path = parse_line_no_xy(section)
-          PageBaseContent.new(bg_path, page_count, start_time)
+          PageBaseContent.new(bg_path, page_count)
         when section.slice(0,4) == 'wait'
           WaitButtonContent.new
         when section.slice(0,5) == 'hline'
@@ -228,6 +239,8 @@ class Parser
         when section.slice(0,5) == 'vline'
           x, y, len, width, colour = parse_line_specification(section)
           LineContent.new(:vertical, x, y, len, width, colour)
+        when section.slice(0,10) == 'resettimer'
+          TimerReset.new(self)
         else
           # not sure. keep it as nil
         end
@@ -252,12 +265,12 @@ class Parser
 end
 
 class PageData
-  def initialize(dc_kos, start_time)
-    @dc_kos, @start_time = dc_kos, start_time
+  def initialize(dc_kos)
+    @dc_kos = dc_kos
   end
 
   def all
     content_str = @dc_kos.read_whole_txt_file("/rd/content.dreampresent")
-    parsed_content = Parser.new.parse(content_str, @start_time)
+    Parser.new.parse(content_str)
   end
 end

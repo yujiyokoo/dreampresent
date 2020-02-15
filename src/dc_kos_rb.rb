@@ -5,6 +5,7 @@ module Commands
   FWD = -3
   REW = -4
   SWITCH_VIDEO_MODE = -5
+  RESET_TIMER = -6
 end
 
 # Ruby-level wrapper to DcKos

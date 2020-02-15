@@ -2,7 +2,8 @@ class Presentation
   include Commands
 
   def initialize(dc_kos, pages)
-    @dc_kos, @pages  = dc_kos, pages
+    @dc_kos, @pages = dc_kos, pages
+    @start_time = Time.now
   end
 
   def run
@@ -10,18 +11,22 @@ class Presentation
     time_adjustment = 0
     while(idx < @pages.length)
       input = @pages[idx].show(@dc_kos,
-        PresentationState.new(idx, time_adjustment)
+        PresentationState.new(idx, time_adjustment),
+        @start_time
       )
 
       case
       when input == NEXT_PAGE
-          idx += 1
+        idx += 1
       when input == PREVIOUS_PAGE
         idx -= 1
       when input == QUIT
         idx += @pages.length
       when input == SWITCH_VIDEO_MODE
         @dc_kos.next_video_mode
+      when input == RESET_TIMER
+        @start_time = Time.now
+        idx += 1
       when input == FWD
         time_adjustment += 300
         time_adjustment = (40 * 60) if time_adjustment > (40 * 60)
