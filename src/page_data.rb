@@ -114,10 +114,12 @@ class LineContent
   end
 
   def render(dc_kos, _presentation_state, time_now)
-    # currently supports 'red'
+    # currently supports 'red', 'black'
     # everything else will be white
     r, g, b = if @colour == 'red'
       [255, 0, 0]
+    elsif @colour == 'black'
+      [0, 0, 0]
     else
       [255, 255, 255]
     end
@@ -136,12 +138,18 @@ class LineContent
 end
 
 class TimerReset
-  def initialize(parser)
-    @parser = parser
-  end
-
   def render(_dc_kos, _presentation_state, time_now)
     Commands::RESET_TIMER
+  end
+end
+
+class BlockContent
+  def initialize(x0, y0, x1, y1)
+    @x0, @y0, @x1, @y1 = x0, y0, x1, y1
+  end
+
+  def render(dc_kos, ps, time_now)
+    LineContent.new(:horizontal, @x0, @y0, (@x1 - @x0), (@y1 - @y0), 'black').render(dc_kos, ps, time_now)
   end
 end
 
@@ -206,6 +214,13 @@ class Parser
     return path
   end
 
+  def parse_rectangle(line)
+    split_line = line.split(':')
+    tag = split_line[0]
+    _unused, x0, y0, x1, y1 = tag.split(',')
+    return x0.to_i, y0.to_i, x1.to_i, y1.to_i
+  end
+
   def parse(input_str)
     pages = input_str
       .split("\n")
@@ -222,6 +237,19 @@ class Parser
         when idx == 0
           title = section.sub('=', '').strip # remove the first '='
           PageTitleContent.new(title)
+        when section.slice(0,10) == 'resettimer'
+          TimerReset.new
+        when section.slice(0,8) == 'txtblock'
+          x0, y0, x1, y1 = parse_rectangle(section)
+          BlockContent.new(x0, y0, x1, y1)
+        when section.slice(0,5) == 'hline'
+          x, y, len, width, colour = parse_line_specification(section)
+          LineContent.new(:horizontal, x, y, len, width, colour)
+        when section.slice(0,5) == 'vline'
+          x, y, len, width, colour = parse_line_specification(section)
+          LineContent.new(:vertical, x, y, len, width, colour)
+        when section.slice(0,4) == 'wait'
+          WaitButtonContent.new
         when section.slice(0,3) == 'txt'
           x, y, colour, show_bg, text_content = parse_line_xy_col_bg(section)
           TextContent.new(x, y, text_content, colour, show_bg)
@@ -231,16 +259,6 @@ class Parser
         when section.slice(0,3) == 'bkg'
           bg_path = parse_line_no_xy(section)
           PageBaseContent.new(bg_path, page_count)
-        when section.slice(0,4) == 'wait'
-          WaitButtonContent.new
-        when section.slice(0,5) == 'hline'
-          x, y, len, width, colour = parse_line_specification(section)
-          LineContent.new(:horizontal, x, y, len, width, colour)
-        when section.slice(0,5) == 'vline'
-          x, y, len, width, colour = parse_line_specification(section)
-          LineContent.new(:vertical, x, y, len, width, colour)
-        when section.slice(0,10) == 'resettimer'
-          TimerReset.new(self)
         else
           # not sure. keep it as nil
         end
