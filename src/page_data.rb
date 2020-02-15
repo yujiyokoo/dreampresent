@@ -214,11 +214,19 @@ class Parser
     return path
   end
 
-  def parse_rectangle(line)
+  def parse_line_rectangle(line)
     split_line = line.split(':')
     tag = split_line[0]
     _unused, x0, y0, x1, y1 = tag.split(',')
     return x0.to_i, y0.to_i, x1.to_i, y1.to_i
+  end
+
+  def parse_code_line(line)
+    split_line = line.split(':')
+    tag = split_line[0]
+    _unused, x, y, lang = tag.split(',')
+    rest = split_line[1..-1].join(':')
+    return x.to_i, y.to_i, lang, rest
   end
 
   def parse(input_str)
@@ -240,7 +248,7 @@ class Parser
         when section.slice(0,10) == 'resettimer'
           TimerReset.new
         when section.slice(0,8) == 'txtblock'
-          x0, y0, x1, y1 = parse_rectangle(section)
+          x0, y0, x1, y1 = parse_line_rectangle(section)
           BlockContent.new(x0, y0, x1, y1)
         when section.slice(0,5) == 'hline'
           x, y, len, width, colour = parse_line_specification(section)
@@ -250,6 +258,9 @@ class Parser
           LineContent.new(:vertical, x, y, len, width, colour)
         when section.slice(0,4) == 'wait'
           WaitButtonContent.new
+        when section.slice(0,4) == 'code'
+          x, y, lang, text_content = parse_code_line(section)
+          TextContent.new(x, y, text_content, 'white', nil)
         when section.slice(0,3) == 'txt'
           x, y, colour, show_bg, text_content = parse_line_xy_col_bg(section)
           TextContent.new(x, y, text_content, colour, show_bg)
