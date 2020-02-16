@@ -177,6 +177,18 @@ class TextContent
   end
 end
 
+class ResizableImageContent
+  def initialize(x, y, w, hpath)
+    @x, @y, @w, @h, @path = x, y, w, h, path.strip
+  end
+
+  def render(dc_kos, _presentation_state, time_now)
+    dc_kos.render_png(@path, @x, @y)
+    @dc_kos.show_512x512_png(@path, x, y, w, h)
+    ResultConstants::OK
+  end
+end
+
 class ImageContent
   def initialize(x, y, path)
     @x, @y, @path = x, y, path.strip
@@ -339,6 +351,14 @@ class Page
 end
 
 class Parser
+  def parse_line_xy_wh_path(line)
+    split_line = line.split(':')
+    tag = split_line[0]
+    _unused, x, y, w, h = tag.split(',')
+    rest = split_line[1..-1].join(':')
+    return x.to_i, y.to_i, w.to_i, h.to_i, rest
+  end
+
   def parse_line_xy_col_bg(line)
     split_line = line.split(':')
     tag = split_line[0]
@@ -397,6 +417,9 @@ class Parser
         when section.slice(0,8) == 'txtblock'
           x0, y0, x1, y1 = parse_line_rectangle(section)
           BlockContent.new(x0, y0, x1, y1)
+        when section.slice(0,6) == 'img512'
+          x, y, w, h, image_path = parse_line_xy_wh_path(section)
+          ResizableImageContent.new(x, y, w, h, image_path)
         when section.slice(0,5) == 'hline'
           x, y, len, width, colour = parse_line_specification(section)
           LineContent.new(:horizontal, x, y, len, width, colour)

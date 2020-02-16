@@ -5,6 +5,7 @@ class Dreampresent
 
   def start
     puts "Dreampresent: starting"
+    @dc_kos.pvr_initialise()
     Presentation.new(@dc_kos,
       PageData.new(@dc_kos).all
     ).run

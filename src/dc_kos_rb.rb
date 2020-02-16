@@ -96,6 +96,14 @@ class DcKosRb
     end
   end
 
+  # NOTE: This requires the source to be 512x512 png!
+  # x, y are zero-based but note the pvr uses 1-based coordinates (hence the '+ 1')
+  # NOTE: Before calling this, you need to initialise PVR like: dc_kos.pvr_initialise()
+  # @dc_kos.show_512x512_png('/rd/dc_controller_orig400x362.png', 0, 0, 640, 480)
+  def show_512x512_png(path, x, y, w, h)
+    @dc_kos::load_png(path, x+1, y+1, x+w, y+h)
+  end
+
   # press DOWN and B to quit
   def quit_combination?(previous, current)
     !(@dc_kos::dpad_down?(previous) && @dc_kos::btn_b?(previous)) &&

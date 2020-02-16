@@ -265,7 +265,7 @@ mrb_value render_png(mrb_state *mrb, mrb_value self) {
   return mrb_nil_value();
 }
 
-mrb_value pvr_intialise(mrb_state *mrb, mrb_value self) {
+mrb_value pvr_initialise(mrb_state *mrb, mrb_value self) {
   pvr_init_defaults();
 
   return mrb_nil_value();
@@ -305,7 +305,7 @@ void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(7));
   mrb_define_module_function(mrb, module, "load_png", load_png, MRB_ARGS_REQ(4));
   mrb_define_module_function(mrb, module, "render_png", render_png, MRB_ARGS_REQ(3));
-  mrb_define_module_function(mrb, module, "pvr_initialise", pvr_intialise, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, module, "pvr_initialise", pvr_initialise, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
