@@ -19,12 +19,19 @@ class DcKosRb
   LINE_HEIGHT = 30
   # this understands '\n' as linebreak
   def draw_str(str, x, y, line_height = LINE_HEIGHT, colour, show_bg)
+    # TODO: let's make a colour lookup class... See LineContent
     rgb =
       case colour
       when 'red'
          [255, 0, 0]
+      when 'magenta'
+         [255, 0, 255]
       when 'yellow'
          [255, 255, 0]
+      when 'ltgreen'
+         [144, 238, 144]
+      when 'cyan'
+        [0, 255, 255]
       else # unknown colours default to white
          [255, 255, 255]
       end

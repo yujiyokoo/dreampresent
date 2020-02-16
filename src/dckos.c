@@ -103,7 +103,7 @@ mrb_value draw_str(mrb_state *mrb, mrb_value self) {
 
   mrb_get_args(mrb, "Siiiiii", &str_content, &x, &y, &r, &g, &b, &bg_on);
   unwrapped_content = mrb_str_to_cstr(mrb, str_content);
-  printf("%s\n", unwrapped_content);
+  printf("KOS draw_str: %s\n", unwrapped_content);
 
   // assuming 16 bit colours
   bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, PACK_PIXEL(r, g, b), 0x00000000, (sizeof (uint16)) << 3, bg_on, unwrapped_content);

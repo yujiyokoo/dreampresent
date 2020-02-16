@@ -61,12 +61,107 @@ class CodeContent
     ResultConstants::OK
   end
 
+  # highlight while for do end def if elsif else class
+  # highlight Constants
   def render_code(dc_kos, line, x, y, show_bg)
-    dc_kos.draw_str(line, x, y, "white", show_bg)
+    print "------ breaking line: "
+    p line
+    p break_line(line)
+    puts "^^^^^^ breaking line ^^^^^^"
+    var_x, var_y = x, y
+    break_line(line).each { |term|
+      puts "current term is: '#{term}'"
+      case
+      when "\n" == term
+        var_x = x
+        var_y += 30
+      when ['class', 'def', 'end', 'do', 'if', 'elsif', 'else', 'while', 'for'].include?(term.strip)
+      puts "rendering reserved: '#{term}'"
+        dc_kos.draw_str(term, var_x, var_y, "yellow", show_bg)
+        var_x += term.size * 12
+      when uppercases.include?(term.strip[0])
+      puts "rendering upcase: '#{term}'"
+        dc_kos.draw_str(term, var_x, var_y, "cyan", show_bg)
+        var_x += term.size * 12
+      when '@' == term.strip[0]
+      puts "rendering instance var: '#{term}'"
+        dc_kos.draw_str(term, var_x, var_y, "ltgreen", show_bg)
+        var_x += term.size * 12
+      else
+      puts "rendering other: '#{term}'"
+        dc_kos.draw_str(term, var_x, var_y, "white", show_bg)
+        var_x += term.size * 12
+      end
+    }
+  end
+
+  def uppercases
+    %w[ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ]
+  end
+
+  def alphas
+    uppercases + %w[ a b c d e f g h i j k l m n o p q r s t u v w x y z ]
+  end
+
+  def nums
+    %w[ 0 1 2 3 4 5 6 7 8 9 ]
+  end
+
+  def break_line(line)
+    terms = []
+    term = ''
+    mode = :normal
+    line.split('').each_with_index { |c, idx|
+      is_eol = line.size == idx + 1
+      puts "current_mode: #{mode}, current_char: #{c}, is_eol: #{is_eol}"
+      case
+      when c == "\n"
+        terms << term if term != ''
+        terms << "\n"
+        term = ''
+        mode = :normal
+      when mode == :normal
+        if alphas.include?(c) || ["_", "@"].include?(c)
+          terms << term if term != ''
+          term = c
+          mode = :word
+        elsif nums.include?(c)
+          terms << term if term != ''
+          term = c
+          mode = :num
+        else
+          term << c
+          terms << term if is_eol
+        end
+      when mode == :word
+        if alphas.include?(c) || c == "_" || nums.include?(c)
+          term << c
+          terms << term if is_eol
+        else
+          terms << term if term != ''
+          term = c
+          terms << term if is_eol # needs this for lines like 'foo(bar)'
+          mode = :normal
+        end
+      when mode == :num
+        if c == "_" || nums.include?(c)
+          term << c
+          terms << term if is_eol
+        else
+        puts "adding term #{term}" if term != ''
+          terms << term if term != ''
+          term = c
+          mode = :normal
+        end
+      else
+        raise "Unexpected char: #{c}"
+      end
+    }
+    terms
   end
 
   def render_string(dc_kos, line, x, y, show_bg)
-    dc_kos.draw_str(line, x, y, "red", show_bg)
+    dc_kos.draw_str(line, x, y, "magenta", show_bg)
   end
 end
 
@@ -165,13 +260,16 @@ class LineContent
   def render(dc_kos, _presentation_state, time_now)
     # currently supports 'red', 'black'
     # everything else will be white
-    r, g, b = if @colour == 'red'
-      [255, 0, 0]
-    elsif @colour == 'black'
-      [0, 0, 0]
-    else
-      [255, 255, 255]
-    end
+    # TODO: let's make a colour lookup class... See DcKos
+    r, g, b =
+      case @colour
+      when 'red'
+        [255, 0, 0]
+      when 'black'
+        [0, 0, 0]
+      else
+        [255, 255, 255]
+      end
 
     if @direction == :horizontal
       (0...@width).each do |line_num|
