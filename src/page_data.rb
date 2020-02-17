@@ -178,13 +178,12 @@ class TextContent
 end
 
 class ResizableImageContent
-  def initialize(x, y, w, hpath)
+  def initialize(x, y, w, h, path)
     @x, @y, @w, @h, @path = x, y, w, h, path.strip
   end
 
   def render(dc_kos, _presentation_state, time_now)
-    dc_kos.render_png(@path, @x, @y)
-    @dc_kos.show_512x512_png(@path, x, y, w, h)
+    dc_kos.show_512x512_png(@path, @x, @y, @w, @h)
     ResultConstants::OK
   end
 end
