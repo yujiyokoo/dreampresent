@@ -5,13 +5,26 @@
 
 =
 -bkg: /rd/bg_dark.png
--txt,60,30:Developing Dreamcast games with mruby
+-txt,60,30:Developing your Dreamcast games with mruby
 -txt,60,120:Yuji Yokoo - @yujiyokoo
 -txt,120,260:PRESS START!
 
 -wait:
--txt,370,52,red:^
--txt,330,64,red:and apps!
+-txt,432,52,red:^
+-txt,280,64,red:and presentation tools!
+
+= Development page
+-txtblock,30,30,610,400
+-code,30,30,ruby:class HelloWorld
+  idx += @pages.length # Past last page
+  def initialize(name)
+    @name = name
+  end
+
+  def hello
+    puts "Hello, #{@name}!"
+  end
+end
 
 = Resetting timer internally...
 -resettimer
@@ -19,17 +32,11 @@
 = About me
 -txt,60,30:Yuji Yokoo
   Web dev. Loves Ruby.
-  Currently uses: Ruby/Elixir/F#/Elm/Kotlin
+  Currently uses: Elixir/F#/Elm/Ruby
   Formerly: Windows desktop application
     developer (MFC/Win32)
--img,60,260: /rd/yuji_avatar.png
-
-= About me
--txt,60,30:Yuji Yokoo
-  From: Tokyo, Japan.
-    Living in: Adelaide, Australia.
-  First time in Taiwan!
-  First time conference speaker!
+  From: Tokyo, Japan
+  Lives in: Adelaide, South Australia
 -img,60,260: /rd/yuji_avatar.png
 
 = Adelaide, Australia
@@ -42,7 +49,7 @@
  - What is KallistiOS
  - Homebrew Development Steps
  - Presentation app code overview
- - Emulator and real unit
+ - Running the code
  - Getting the program to the unit
  - Future directions / TODOs
  - Thanks and info
@@ -58,8 +65,8 @@
 -txt,60,150: - It's a live demo
 -wait:
 -txt,60,180: - Features
-   - Text
-   - PNG images (no resizing yet...)
+   - Syntax highlight <- New!
+   - PNG images
    - Time / page progress
    - Lines (horizontal & vertical)
    - Go back / forward
@@ -71,8 +78,16 @@
 black background.
 -txt,60,100,yellow: Here's yellow text
 -hline,60,150,300,5:red
--wait:
--img,60,180: /rd/example_slide_page.png
+-img,400,30: /rd/Dreamcast.png
+-txtblock,60,180,510,400
+-code,60,180,ruby:class HelloWorld
+  def run
+    puts "Hello, world!"
+  end
+end
+
+HelloWorld.new.run
+
 
 = What is Dreamcast?
 -wait:
@@ -80,6 +95,16 @@ black background.
 -wait:
 -hline,176,42,86,3:red
 -txt,176,60:latest
+-wait:
+-hline,176,72,74,3:red
+-wait:
+-img512,60,38,480,407: /rd/megadrivemini_orig568x482.png
+
+= What is Dreamcast?
+-txt,60,30: - Sega's current video game console
+-hline,176,42,86,3:red
+-txt,176,60:latest
+-hline,176,72,74,3:red
 -wait:
 -txt,60,90: - Released in 1998
    - Hitachi SH4 at 200MHz
@@ -93,7 +118,9 @@ black background.
 = Why Dreamcast?
 -txt,60,30:
  - 2018 was the 20th anniversary year
- - I had one still working from 2002
+ - I had my 2nd Dreamcast unit working from 2002
+-wait:
+-txt,60,90:
  - Dreamcast is still loved by many!
  - Dreamcast runs custom code with no mods*
  - Dreamcast has strong indie/homebrew culture
@@ -102,13 +129,16 @@ black background.
 -txt,30,330: *assuming you have consoles produced
   in 1998, 1999, or early 2000
 
-= What is not so good with Dreamcast today?
--txt,60,60:
+= What are some disadvantages of Dreamcast today?
+-txt,60,30:
   - No more units produced
-  - Peripherals are hard to get
+-wait:
+-txt,60,60:
+  - Peripherals are hard/expensive to get
+-wait:
+-txt,60,90:
   - No app store or Internet-based
     distribution channel
-  - Lots of lost information
 
 = How does Dreamcast compare with current consoles?
 -img,10,60: /rd/Dreamcast.png
@@ -129,43 +159,36 @@ Blu-ray drive
 
 = What is mruby?
 -wait:
--txt,60,60:
- - Lightweight Ruby implementation
- - For embedding
+-txt,60,30:- Lightweight Ruby *implementation*
+ - Ruby 1.9 syntax, focusing on ISO
+ - Intended for embedding
  - Easy to compile and link into C
+ - Not necessarily faster or slower
+ - First released in 2012
+ - Many things are optional
 
--txt,30,210:
+-txt,30,240:
  "mruby is the lightweight implementation of the
   Ruby language complying with part of the ISO
   standard. mruby can be linked and embedded
   within your application."
 
 = The advantage of using mruby
+-wait:
+-txt,40,40:- Main logic in Ruby! Fun!
+-wait:
+-txt,40,70:- (Personally) more productive
+-wait:
+-txt,40,100:- Easy integration with C
+  Use C where necessary, particularly to
+  get down to lower-level operations.
 
--wait:
--txt,40,40:Main logic in Ruby! Fun!
--wait:
--txt,40,70:Less bugs: For example,
-string manipulation is not easy in C
--wait:
--img,50,200: /rd/git_log_memory_bug.png
-
-= Which language to use?
--txt,40,40:Rule of thumb:
-
-Write all code in Ruby
--wait:
--txt,40,130:...unless that is not feasible.
--wait:
--txt,40,190:Use C where necessary, particularly to
-get down to lower-level operations.
-
-= What is KallistiOS?
+= KallistiOS
 
 -txt,40,80:KallistiOS, aka KOS ("chaos").
 Technically cross platform.
 
-Wikipedia has:
+Wikipedia says:
 "KallistiOS is a free, BSD license-based
  development system for the Sega Dreamcast
  game console."
@@ -249,31 +272,62 @@ etc.
 -vline,620,76,188,4:red
 -hline,20,260,604,4:red
 
-= mruby-dreamcast
--img,40,40: /rd/mruby-dreamcast-gitlab.png
-
-= mruby-dreamcast
--txt,40,60:The env is currently not cleanly set up...
--txt,40,90:It also takes a lot of time to build.
--txt,40,120:It also takes a lot of disc space.
--txt,40,150:I'm planning to address these issues.
-
 = Main entry point
--img,40,40: /rd/main_c.png
+-txtblock,30,30,600,410
+-code,40,40,c:extern const uint8_t bytecode[];
+int main(int argc, char **argv) {
+  vid_set_mode(DM_640x480_VGA, PM_RGB565);
+
+  mrb_state *mrb = mrb_open();
+  struct RClass *dc_kos =
+    mrb_define_module(mrb, "DcKos");
+  define_module_functions(mrb, dc_kos);
+  mrb_load_irep(mrb, bytecode);
+  mrb_close(mrb);
+  return 0;
+}
 -wait:
--txt,340,70,white,yes:<- Dreamcast assets
--txt,420,160,white,yes:<- Dreamcast video
+-txt,420,40,yellow,yes:<- mruby bytecode
 -wait:
--txt,420,120,white,yes:<- mruby bytecode
+-txt,400,130,yellow,yes:^ Dreamcast video
+-txt,400,130,yellow:|
 -wait:
--txt,340,220,white,yes:<- init mruby
--txt,420,290,white,yes:<- c functions
+-txt,420,160,yellow,yes:<- init mruby
 -wait:
--txt,420,330,white,yes:<- run mruby code
--txt,300,360,white,yes:<- finish
+-txt,420,190,yellow,yes:<- build
+-txt,420,220,yellow:   module and
+   functions
+-wait:
+-txt,420,280,yellow,yes:<- run mruby code
+-wait:
+-txt,260,310,yellow,yes:<- finish
 
 = mruby bytecode
--img,40,40: /rd/mrb_compiled.png
+-txtblock,20,50,610,400
+-code,30,60,c: #include <stdint.h>
+ #ifdef __cplusplus
+ extern const uint8_t bytecode[];
+ #endif
+ const uint8_t
+ #if defined __GNUC__
+ __attribute__((aligned(4)))
+ #elif defined _MSC_VER
+ __declspec(align(4))
+ #endif
+ bytecode[] = {
+
+= mruby bytecode
+-txtblock,20,50,610,400
+-code,30,60,c: #endif
+ bytecode[] = {
+ 0x45,0x54,0x49,0x52,0x30,0x30,0x30,0x36,0x34,
+ 0x35,0x00,0x00,0x89,0xe0,0x4d,0x41,0x54,0x5a,
+ 0x30,0x30,0x30,0x30,0x49,0x52,0x45,0x50,0x00,
+ 0x00,0x3f,0x9b,0x30,0x30,0x30,0x32,0x00,0x00,
+ 0x06,0x18,0x00,0x02,0x00,0x06,0x00,0x13,0x00,
+ 0x00,0x01,0x1f,0x0f,0x02,0x5b,0x02,0x00,0x5c,
+ 0x02,0x00,0x0f,0x02,0x0f,0x03,0x5a,0x02,0x01,
+ 0x5c,0x02,0x01,0x0f,0x02,0x0f,0x03,0x5a,0x02,
 
 = Calling KOS functions
 -txt,30,30:Example: Reading controller buttons
@@ -289,8 +343,16 @@ etc.
 
 = Calling KOS functions
 -txt,30,30:Example: Reading controller buttons
--txt,30,80:KOS button state in 16 bit flags
--img,40,120: /rd/controller_h.png
+-txt,30,60:KOS button state in 16 bit flags
+-txtblock,40,90,610,370
+-code,50,100,c: #define CONT_C          (1<<0)
+ #define CONT_B          (1<<1)
+ #define CONT_A          (1<<2)
+ #define CONT_START      (1<<3)
+ #define CONT_DPAD_UP        (1<<4)
+ #define CONT_DPAD_DOWN      (1<<5)
+ #define CONT_DPAD_LEFT      (1<<6)
+ #define CONT_DPAD_RIGHT     (1<<7)
 -wait:
 -hline,40,130,240,3:red
 -vline,40,130,100,3:red
@@ -300,112 +362,202 @@ etc.
 = Calling KOS functions
 -txt,30,30:Example: Reading controller buttons
 -txt,80,200:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--txt,80,230,yellow:                ^ ^ ^ ^ ^ ^ ^
-                R L D U S A B
+-txt,80,230,yellow:                ^ ^ ^ ^ ^ ^ ^ ^
+                R L D U S A B C
 
 = Calling KOS functions
--img,40,30: /rd/dckos_c.png
--txt,320,414,white,yes:^mruby-callable functions
+-txt,30,30:Example: Reading controller buttons
+-txt,80,200:0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+-txt,80,230,yellow:                        ^
+                        S
+-txt,80,290:8 or 0x08 = CONT_START
 -wait:
--txt,280,120,white,yes:^Read bus for buttons
-#-wait:
-#-txt,220,320,white,yes:^calling check_btn above
-#-wait:
-#-txt,220,260,white,yes:^bitwise AND operation
+-txtblock,70,330,580,380
+-code,80,340,c: #define CONT_START      (1<<3)
+
+= Calling KOS functions
+-txt,30,30:Example: Reading controller buttons
+-txt,30,60:KOS button state in 16 bit flags
+-txtblock,20,90,610,400
+-code,30,100,c:mrb_value start(mrb_state *mrb, mrb_value self)
+{
+  struct mrb_value state;
+  mrb_get_args(mrb, "i", &state);
+
+  return mrb_bool_value(
+    mrb_fixnum(state) & CONT_START
+  );
+};
+-wait:
+-txt,170,220,yellow,yes:^ unwrap mruby value param
+-txt,170,220,yellow:|
+-wait:
+-hline,74,306,360,2:yellow
+-txt,280,310,yellow,yes:Bitwise AND
+-wait:
+-txt,320,250,yellow,yes:<- wrap in mruby value
+
+= Calling KOS functions
+-txt,30,30:Example: Reading controller buttons
+-txt,30,60:KOS button state in 16 bit flags
+-txtblock,20,90,610,400
+-code,30,100,c:void define_module_functions(mrb_state *mrb,
+        struct RClass *module)
+{
+  mrb_define_module_function(mrb, module,
+      "btn_start?", start, MRB_ARGS_REQ(1));
+}
+-wait:
+-txt,100,244,yellow,yes:     ^ attach "start" function to
+the given module, and call it "btn_start?"
+-txt,100,244,yellow:     |
 
 = Calling KOS functions
 -txt,40,40:From Ruby:
--img,40,120: /rd/start_on.png
+-txtblock,40,120,600,240
+-code,50,130,ruby:def is_start_on?
+  DcKos::btn_start?(DcKos::get_button_state)
+end
 
-= start.rb + Dreampresent
--img,40,40: /rd/start_rb.png
+= Dreampresent start.rb
+-txtblock,40,40,600,400
+-code,50,50,ruby:begin
+  puts "Starting presentation."
+  Dreampresent.new(DcKosRb.new(DcKos)).start
+rescue => ex
+  # NOTE: backtrace requires 'mrbc -g'
+  p ex.backtrace
+  p ex.inspect
+  raise ex
+end
 -wait:
--txt,460,70,white,yes:<- kick off
--txt,240,130,white,yes:<- errors/clean up
--wait:
--txt,360,280,white,yes:create presentation
--txt,440,310,white,yes:<- and start
+-txt,460,140,yellow,yes:^kick off
+-txt,270,220,yellow,yes:<- errors/clean up
 
-= Presentation class
--img,40,40: /rd/presentation_rb.png
--wait:
--txt,320,180,white,yes:<- main loop
--wait:
--txt,460,210,white,yes:<- render and
--txt,410,240,white,yes:   wait for input
--wait:
--txt,340,280,white,yes:<- adjust values
+= Dreampresent application class
+-txtblock,40,40,600,400
+-code,50,50,ruby:class Dreampresent
+  def initialize(dc_kos)
+    @dc_kos = dc_kos
+  end
 
-= Another example, game main loop
--img,40,40: /rd/mrbtris_mainloop.png
+  def start
+    puts "Dreampresent: start"
+    Presentation.new(@dc_kos,
+      PageData.new(@dc_kos, Time.now).all
+    ).run
+  end
+end
 -wait:
--txt,370,90,white,yes:<- outer loop
+-txt,440,190,yellow,yes:create
+-txt,440,220,yellow,yes:presentation
+-txt,440,250,yellow,yes:<- and start
+
+= Dreampresent Presentation class
+-txtblock,40,40,600,400
+-code,50,50,ruby:class Presentation
+  def run
+    idx = 0
+    while(idx < @pages.length)
+      input = @pages[idx].show(@dc_kos, idx)
+      case
+      when input == NEXT_PAGE
+        idx += 1
+      when input == QUIT
+        idx += @pages.length # Past last page
+      end
+    end
 -wait:
--txt,260,120,white,yes:<- PRESS START!
+-txt,410,150,yellow,yes:<- main loop
 -wait:
--txt,340,180,white,yes:<- draw initial board
+-txt,420,200,yellow,yes:|
+-txt,220,200,yellow,yes:^render and wait for input
 -wait:
--txt,220,220,white,yes:<- inner loop for single round
+-txt,380,260,yellow,yes:<- respond
+   to input
+
+= Game example main loop
+-txtblock,40,40,600,410
+-code,50,50,ruby:def main_loop
+  @dc2d::clear_score(@score)
+  while true
+    @screen.draw_board(FULL_SOLID_BOARD)
+
+    wait_for_start_button
+    running = true
+
+    @game_state.reset
+    @screen.draw_board(@game_state)
+
+    while running do
+
 -wait:
--txt,300,290,white,yes:<- update board for input
--txt,430,320,white,yes:<- game logic
-   continues...
+-txt,390,80,yellow,yes:<- outer loop
+-wait:
+-txt,370,200,yellow,yes:<- PRESS START!
+-wait:
+-txt,440,290,yellow,no:draw initial
+   <- board
+-wait:
+-txt,320,350,yellow,yes:      inner loop for
+<- single game round
 
 = Rendering graphics via VRAM
 -txt,40,30: KOS lets us manipulate VRAM directly
 -img,40,80: /rd/vram_s_manipulation.png
 -wait:
 -hline,84,208,408,4:red
+-txt,300,220,white,yes:|
 -txt,300,220,white,yes:^manipulating vram
 
 = Where to run/test
 -txt,40,60:Actual Dreamcast unit is the best.
-However, emulator is handy too.
-
-= Running on the emulator
--txt,40,40: DC emulators are good, but...
- - some are difficult to build/run
- - compatibility issues
- - "not the same"
+However, emulators are handy too.
 -wait:
--txt,40,160: - but, there is STDOUT (also w/ serial or ip)
+-txt,40,120:Emulators
+ - Convenient. No need for the console.
+ - Has Standard Out (STDOUT)
+ - But, it's not the same.
 
 = Console (emulator/ip/serial)
 -txt,40,30: with emulators, console output is available
 -img,40,70: /rd/emulator_console.png
 
 = Getting the program onto Dreamcast
--txt,40,40:Code must be cross-compiled on host,
-then put on the unit... but how?
+-txt,40,40:So, how would you put it on the unit?
 -wait:
 -txt,40,100:"Is there a USB Port?"
 -wait:
--txt,40,130:"No. It was 1998."
+-txt,40,160:"There's a serial port at the back.
+It was 1998."
+
+= Getting the program onto Dreamcast
+-txt,40,40:There are multiple common methods
+of getting your binaries onto Dreamcast.
 -wait:
--txt,40,160:"There's a serial port at the back."
--wait:
--txt,40,200: 1. Use CD-Rs
--wait:
--txt,40,230: 2. Use SDs with SD loader software
--wait:
--txt,40,260: 3. Use Broadband Adapters (BBAs) with ip loader
--wait:
--txt,40,290: 4. Use serial cable (DC coder's cable)
+-txt,40,100: 1. Use CD-Rs
+-txt,40,130: 2. Use SDs with SD loader software
+-txt,40,160: 3. Use Broadband Adapters (BBAs) with ip loader
+-txt,40,190: 4. Use serial cable (DC coder's cable)
   with serial loader
 
 = Getting the program onto Dreamcast
 -txt,40,40:
+There are problems with all of them.
+
 CD-Rs are expensive and time consuming.
 
-SDs also takes a lot of time.
+SDs are cheaper but still tedious.
 
 BBAs are expensive.
+
+Serial cables need to be built.
 
 = Getting the program onto Dreamcast
 -img,40,40: /rd/bba_ebay.png
 
 = Getting the program onto Dreamcast
--txt,80,210:So I decided to try the serial port
+-txt,80,210:Serial "cable" construction
 
 = Building the serial cable
 -txt,40,40:The serial cable could be built
@@ -420,7 +572,6 @@ Available from net auctions?
 
 = Building the serial cable
 -txt,40,40:Alternatively, the SD card reader has a connector
-An SD card reader costs about AUD20...
 
 -wait:
 -img,0,0: /rd/DCSerialConnector.png
@@ -455,7 +606,7 @@ An SD card reader costs about AUD20...
  - KallistiOS developers
  - Dreamcast Indie and Homebrew communities
    (Simulant in particular)
- - Rubyconf Taiwan
+ - Rubyconf Australia
  - Adam Davies, Olly Putland and Paul Fioravanti
  - everyone here
 
