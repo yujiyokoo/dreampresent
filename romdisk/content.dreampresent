@@ -1,9 +1,4 @@
 =
--txt,80,220:Dreampresent developed by Yuji Yokoo
--wait:
--img,40,40: /rd/main_c.png
-
-=
 -bkg: /rd/bg_dark.png
 -txt,60,30:Developing your Dreamcast games with mruby
 -txt,60,120:Yuji Yokoo - @yujiyokoo
@@ -41,6 +36,9 @@ end
 
 = Adelaide, Australia
 -img,140,40: /rd/adelaide_and_taipei.png
+-img512,30,108,424,420: /rd/AdelaideTaipei_orig659x652.png
+-wait:
+-img512,30,94,452,420: /rd/AdelaideMelbourne_orig655x608.png
 
 = Table of Contents
 -txt,40,40: - About this app
@@ -65,7 +63,7 @@ end
 -txt,60,150: - It's a live demo
 -wait:
 -txt,60,180: - Features
-   - Syntax highlight <- New!
+   - Syntax highlighting <- New!
    - PNG images
    - Time / page progress
    - Lines (horizontal & vertical)
@@ -116,41 +114,45 @@ HelloWorld.new.run
    - Modem (33.6K~56K)
 
 = Why Dreamcast?
--txt,60,30:
- - 2018 was the 20th anniversary year
+-wait:
+-txt,30,60: - Why not?
+-wait:
+-txt,30,90: - 2018 was the 20th anniversary year
  - I had my 2nd Dreamcast unit working from 2002
 -wait:
--txt,60,90:
- - Dreamcast is still loved by many!
- - Dreamcast runs custom code with no mods*
- - Dreamcast has strong indie/homebrew culture
- - Dreamcast has good OSS for homebrew
-
--txt,30,330: *assuming you have consoles produced
+-txt,30,180: - Dreamcast is still loved by many! It's awesome.
+-wait:
+-txt,30,210: - Dreamcast runs custom code with no mods*
+-txt,30,360: *assuming you have consoles produced
   in 1998, 1999, or early 2000
+-wait:
+-txt,30,240: - Dreamcast has strong indie/homebrew culture
+-wait:
+-txt,30,270: - Dreamcast has good OSS for homebrew
 
 = What are some disadvantages of Dreamcast today?
--txt,60,30:
-  - No more units produced
 -wait:
--txt,60,60:
+-txt,30,30:
+  - No more units produced & they are all old
+-wait:
+-txt,30,60:
   - Peripherals are hard/expensive to get
 -wait:
--txt,60,90:
+-txt,30,90:
   - No app store or Internet-based
     distribution channel
 
 = How does Dreamcast compare with current consoles?
--img,10,60: /rd/Dreamcast.png
--txt,10,210:
+-img,40,60: /rd/Dreamcast.png
+-txt,40,210:
 Dreamcast
 Hitachi SH4 at 200MHz
 NEC PowerVR2
 16MB RAM + 8MB Video RAM
 GD-ROM drive
 
--img,330,60: /rd/PS4.png
--txt,330,210:
+-img,360,60: /rd/PS4.png
+-txt,360,210:
 PlayStation4
 AMD Jaguar at 1.6GHz
 AMD Radeon GCN
@@ -159,13 +161,19 @@ Blu-ray drive
 
 = What is mruby?
 -wait:
--txt,60,30:- Lightweight Ruby *implementation*
- - Ruby 1.9 syntax, focusing on ISO
- - Intended for embedding
- - Easy to compile and link into C
- - Not necessarily faster or slower
- - First released in 2012
- - Many things are optional
+-txt,60,30: - Lightweight Ruby *implementation*
+-wait:
+-txt,60,60: - Ruby 1.9 syntax, focusing on ISO standard
+-wait:
+-txt,60,90: - Intended for embedding
+-wait:
+-txt,60,120: - Easy to compile and link into C
+-wait:
+-txt,60,150: - Not necessarily faster or slower
+-wait:
+-txt,60,180: - First released in 2012
+-wait:
+-txt,60,210: - Many things are optional
 
 -txt,30,240:
  "mruby is the lightweight implementation of the
@@ -173,7 +181,7 @@ Blu-ray drive
   standard. mruby can be linked and embedded
   within your application."
 
-= The advantage of using mruby
+= The advantages of using mruby
 -wait:
 -txt,40,40:- Main logic in Ruby! Fun!
 -wait:
@@ -289,14 +297,14 @@ int main(int argc, char **argv) {
 -wait:
 -txt,420,40,yellow,yes:<- mruby bytecode
 -wait:
--txt,400,130,yellow,yes:^ Dreamcast video
--txt,400,130,yellow:|
+-txt,360,130,yellow,yes:^ Dreamcast video
+-txt,360,130,yellow:|
 -wait:
 -txt,420,160,yellow,yes:<- init mruby
 -wait:
--txt,420,190,yellow,yes:<- build
--txt,420,220,yellow:   module and
-   functions
+-txt,442,190,yellow,yes:<- build
+-txt,478,220,yellow,yes:module and
+functions
 -wait:
 -txt,420,280,yellow,yes:<- run mruby code
 -wait:
@@ -329,7 +337,7 @@ int main(int argc, char **argv) {
  0x02,0x00,0x0f,0x02,0x0f,0x03,0x5a,0x02,0x01,
  0x5c,0x02,0x01,0x0f,0x02,0x0f,0x03,0x5a,0x02,
 
-= Calling KOS functions
+= Integration with C
 -txt,30,30:Example: Reading controller buttons
 -img,40,80: /rd/dc_controller.png
 -wait:
@@ -341,7 +349,39 @@ int main(int argc, char **argv) {
 -txt,120,360,yellow,yes:[Down]
 -txt,300,340,yellow,yes:[START]
 
-= Calling KOS functions
+= Bitshift and Bitwise AND
+-txt,30,60:Bitshift shifts bits in a binary number
+-wait:
+-txt,30,90:0101 << 1 -> 1010 (decimal 5 to decimal 10)
+-wait:
+-txt,30,120:0100 >> 2 -> 0001 (decimal 4 to decimal 1)
+-wait:
+-txt,30,210:AND takes 2 bits and returns 1 if both are 1
+-wait:
+-txt,30,240:1 & 1 -> 1
+-wait:
+-txt,30,270:0 & 1 -> 0
+-wait:
+-txt,30,300:1 & 0 -> 0
+-wait:
+-txt,30,330:0 & 0 -> 0
+
+= Bitshift and Bitwise AND
+-txt,30,60:Bitwise AND can handle many digits together
+-wait:
+-txt,30,90:0101 & 0110 -> 0100
+-wait:
+-txt,30,120:1111 & 0110 -> 0110
+-wait:
+-txt,30,210:It can check a specific digit is on
+-wait:
+-txt,30,240:0110 & 0001 -> 0000
+-wait:
+-txt,30,270:1111 & 0001 -> 0001
+-wait:
+-txt,30,300:1001 & 0001 -> 0001
+
+= Integration with C
 -txt,30,30:Example: Reading controller buttons
 -txt,30,60:KOS button state in 16 bit flags
 -txtblock,40,90,610,370
@@ -353,29 +393,28 @@ int main(int argc, char **argv) {
  #define CONT_DPAD_DOWN      (1<<5)
  #define CONT_DPAD_LEFT      (1<<6)
  #define CONT_DPAD_RIGHT     (1<<7)
--wait:
--hline,40,130,240,3:red
--vline,40,130,100,3:red
--hline,40,230,240,3:red
--vline,280,130,100,3:red
 
-= Calling KOS functions
+= Integration with C
 -txt,30,30:Example: Reading controller buttons
--txt,80,200:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--txt,80,230,yellow:                ^ ^ ^ ^ ^ ^ ^ ^
+-txt,80,200,white,yes:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+-txt,80,230,white,yes:                ^ ^ ^ ^ ^ ^ ^ ^
                 R L D U S A B C
-
-= Calling KOS functions
--txt,30,30:Example: Reading controller buttons
--txt,80,200:0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
--txt,80,230,yellow:                        ^
-                        S
--txt,80,290:8 or 0x08 = CONT_START
+-wait:
+-txt,80,200,white,yes:0 0 0 0 0 0 0 0 0 0 1 0 1 1 1 0
+-txt,80,230,white,yes:                        ^      
+                        S      
+-wait:
+-txt,80,230,white,yes:                        ^      
+0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+-wait:
+-txt,80,230,white,yes:               &               
+-wait:
+-txt,80,290,yellow,yes:0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
 -wait:
 -txtblock,70,330,580,380
 -code,80,340,c: #define CONT_START      (1<<3)
 
-= Calling KOS functions
+= Integration with C
 -txt,30,30:Example: Reading controller buttons
 -txt,30,60:KOS button state in 16 bit flags
 -txtblock,20,90,610,400
@@ -393,11 +432,11 @@ int main(int argc, char **argv) {
 -txt,170,220,yellow:|
 -wait:
 -hline,74,306,360,2:yellow
--txt,280,310,yellow,yes:Bitwise AND
+-txt,240,310,yellow,yes:Checking Start Button
 -wait:
 -txt,320,250,yellow,yes:<- wrap in mruby value
 
-= Calling KOS functions
+= Integration with C
 -txt,30,30:Example: Reading controller buttons
 -txt,30,60:KOS button state in 16 bit flags
 -txtblock,20,90,610,400
@@ -408,11 +447,11 @@ int main(int argc, char **argv) {
       "btn_start?", start, MRB_ARGS_REQ(1));
 }
 -wait:
--txt,100,244,yellow,yes:     ^ attach "start" function to
+-txt,70,254,yellow,yes:     ^ attach "start" function to
 the given module, and call it "btn_start?"
--txt,100,244,yellow:     |
+-txt,70,254,yellow:     |
 
-= Calling KOS functions
+= Integration with C
 -txt,40,40:From Ruby:
 -txtblock,40,120,600,240
 -code,50,130,ruby:def is_start_on?
@@ -431,7 +470,8 @@ rescue => ex
   raise ex
 end
 -wait:
--txt,460,140,yellow,yes:^kick off
+-txt,460,140,yellow,yes:^ kick off
+-txt,460,140,yellow:|
 -txt,270,220,yellow,yes:<- errors/clean up
 
 = Dreampresent application class
@@ -468,10 +508,10 @@ end
       end
     end
 -wait:
--txt,410,150,yellow,yes:<- main loop
+-txt,410,140,yellow,yes:<- main loop
 -wait:
--txt,420,200,yellow,yes:|
--txt,220,200,yellow,yes:^render and wait for input
+-txt,220,200,yellow,yes:^ render and wait for input
+-txt,220,200,yellow:|
 -wait:
 -txt,380,260,yellow,yes:<- respond
    to input
@@ -502,20 +542,12 @@ end
 -txt,320,350,yellow,yes:      inner loop for
 <- single game round
 
-= Rendering graphics via VRAM
--txt,40,30: KOS lets us manipulate VRAM directly
--img,40,80: /rd/vram_s_manipulation.png
--wait:
--hline,84,208,408,4:red
--txt,300,220,white,yes:|
--txt,300,220,white,yes:^manipulating vram
-
 = Where to run/test
 -txt,40,60:Actual Dreamcast unit is the best.
 However, emulators are handy too.
 -wait:
 -txt,40,120:Emulators
- - Convenient. No need for the console.
+ - Convenient. No need for the real unit.
  - Has Standard Out (STDOUT)
  - But, it's not the same.
 
@@ -556,11 +588,8 @@ Serial cables need to be built.
 = Getting the program onto Dreamcast
 -img,40,40: /rd/bba_ebay.png
 
-= Getting the program onto Dreamcast
--txt,80,210:Serial "cable" construction
-
 = Building the serial cable
--txt,40,40:The serial cable could be built
+-txt,40,70:The serial cable could be built
 from components.
 
 The DC serial connectors are available from
@@ -599,6 +628,10 @@ Available from net auctions?
  - get someone else to try it
  - more features (sound, PowerVR, VMU)
  - build more demanding games
+-wait:
+-hline,76,54,400,2:red
+-hline,76,84,400,2:red
+-hline,76,114,400,2:red
 
 = Thanks
 -txt,40,40:I cannot thank everyone here, but in particular:
@@ -615,12 +648,12 @@ Available from net auctions?
   Cropped and resized by Yuji Yokoo.
 
 = More information
--txt,10,40:Development environment:
-https://gitlab.com/yujiyokoo/mruby-dreamcast
+-txt,10,40:Dreampresent:
+https://gitlab.com/yujiyokoo/dreampresent
 -txt,10,120:Example game:
 https://gitlab.com/yujiyokoo/mrbtris-dreamcast
--txt,10,200:Dreampresent:
-https://gitlab.com/yujiyokoo/dreampresent
+-txt,10,200:Development environment:
+https://gitlab.com/yujiyokoo/docker-mruby-kos-dc
 -txt,10,280:Serial cable construction info:
 https://gitlab.com/yujiyokoo/dreamcast-serial-cable
 
