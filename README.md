@@ -12,6 +12,8 @@ If you build this with mruby-dreamcast and run it, you will boot into the presen
 
 You can use A or START to move forward, and use B to go back to the previous page.
 
+Hold A + B + Start to quit
+
 The bottom of the screen shows the page progress and time progress (blue dreamcast swirl for page, red mruby for time).
 
 The time is currently hardcoded to 35 minutes.

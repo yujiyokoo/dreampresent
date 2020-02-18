@@ -106,10 +106,9 @@ class DcKosRb
     @dc_kos::load_png(path, x+1, y+1, x+w, y+h)
   end
 
-  # press DOWN and B to quit
+  # press A + B + Start
   def quit_combination?(previous, current)
-    !(@dc_kos::dpad_down?(previous) && @dc_kos::btn_b?(previous)) &&
-      (@dc_kos::dpad_down?(current) && @dc_kos::btn_b?(current))
+      (@dc_kos::btn_a?(current) && @dc_kos::btn_b?(current) && @dc_kos::btn_start?(current))
   end
 
   def switch_video_mode_combination?(previous, current)
