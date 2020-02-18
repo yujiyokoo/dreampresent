@@ -41,54 +41,69 @@ class CodeContent
 
     line_count = 0
     line_start = 0
+    # colour_idx even -> not string literal. colour_idx odd -> string literal.
     content_array.each_with_index do |content, colour_idx|
+      #puts "content:"
+      #p content
       lines = content.split("\n")
-      puts "lines: "
-      p lines
-      puts "line_count: #{line_count}"
-      puts "line_start: #{line_start}"
+      #puts "lines: "
+      #p lines
+      #puts "line_count: #{line_count}"
+      #puts "line_start: #{line_start}"
       lines.each_with_index do |line, idx|
-        colour = if colour_idx % 2 == 0
+        if colour_idx % 2 == 0
+          #puts "--- render code, line_start: #{line_start}"
           render_code(dc_kos, line, @x + line_start * 12, @y + (line_count + idx) * 30, @show_bg)
         else
+          #puts "--- render string, line_start: #{line_start}"
           render_string(dc_kos, line, @x + line_start * 12, @y + (line_count + idx) * 30, @show_bg)
         end
-        line_start = 0
+        # start rendering from column 0 unless it is the last element of array
+        # since lines have been split by "\n"
+        line_start = 0 unless idx == lines.size - 1
       end
-      line_start = lines[-1].to_s.size
+      line_start += lines[-1].to_s.size
       line_count += content.count("\n")
     end
     ResultConstants::OK
   end
 
+  RBRESERVED = %w[class def end do if elsif else while for case when begin rescue raise fail]
+  CRESERVED = %w[void int char return struct uint8_t extern const]
+  RESERVED = RBRESERVED + CRESERVED
+
   # highlight while for do end def if elsif else class
   # highlight Constants
   def render_code(dc_kos, line, x, y, show_bg)
-    print "------ breaking line: "
-    p line
-    p break_line(line)
-    puts "^^^^^^ breaking line ^^^^^^"
+    #print "------ breaking line: "
+    #p line
+    #p break_line(line)
+    #puts "^^^^^^ breaking line ^^^^^^"
     var_x, var_y = x, y
     break_line(line).each { |term|
-      puts "current term is: '#{term}'"
+      #puts "current term is: '#{term}'"
       case
       when "\n" == term
         var_x = x
         var_y += 30
-      when ['class', 'def', 'end', 'do', 'if', 'elsif', 'else', 'while', 'for'].include?(term.strip)
-      puts "rendering reserved: '#{term}'"
+      when RESERVED.include?(term.strip)
+        #puts "rendering reserved: '#{term}'"
         dc_kos.draw_str(term, var_x, var_y, "yellow", show_bg)
         var_x += term.size * 12
       when uppercases.include?(term.strip[0])
-      puts "rendering upcase: '#{term}'"
+        #puts "rendering upcase: '#{term}'"
         dc_kos.draw_str(term, var_x, var_y, "cyan", show_bg)
         var_x += term.size * 12
       when '@' == term.strip[0]
-      puts "rendering instance var: '#{term}'"
+        #puts "rendering instance var: '#{term}'"
         dc_kos.draw_str(term, var_x, var_y, "ltgreen", show_bg)
         var_x += term.size * 12
+      when '#' == term.strip[0]
+        #puts "rendering comment: '#{term}'"
+        dc_kos.draw_str(term, var_x, var_y, "ltblue", show_bg)
+        var_x += term.size * 12
       else
-      puts "rendering other: '#{term}'"
+        #puts "rendering other: '#{term}'"
         dc_kos.draw_str(term, var_x, var_y, "white", show_bg)
         var_x += term.size * 12
       end
@@ -113,9 +128,10 @@ class CodeContent
     mode = :normal
     line.split('').each_with_index { |c, idx|
       is_eol = line.size == idx + 1
-      puts "current_mode: #{mode}, current_char: #{c}, is_eol: #{is_eol}"
+      #puts "current_mode: #{mode}, current_char: #{c}, is_eol: #{is_eol}"
       case
       when c == "\n"
+        #puts "---------------------- adding #{term} to terms" if mode == :comment
         terms << term if term != ''
         terms << "\n"
         term = ''
@@ -128,7 +144,12 @@ class CodeContent
         elsif nums.include?(c)
           terms << term if term != ''
           term = c
+          terms << term if is_eol # needs this for lines like 'a += 1'
           mode = :num
+        elsif '#' == c
+          terms << term if term != ''
+          term = c
+          mode = :comment
         else
           term << c
           terms << term if is_eol
@@ -148,11 +169,17 @@ class CodeContent
           term << c
           terms << term if is_eol
         else
-        puts "adding term #{term}" if term != ''
+        #puts "adding term #{term}" if term != ''
           terms << term if term != ''
           term = c
+          terms << term if is_eol
           mode = :normal
         end
+      when mode == :comment
+        #puts "****************** adding #{c} to comment"
+        term << c
+        terms << term if is_eol
+        #puts "****************** adding #{term} to terms" if is_eol
       else
         raise "Unexpected char: #{c}"
       end
@@ -276,6 +303,8 @@ class LineContent
       case @colour
       when 'red'
         [255, 0, 0]
+      when 'yellow'
+        [255, 255, 0]
       when 'black'
         [0, 0, 0]
       else

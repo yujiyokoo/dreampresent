@@ -26,6 +26,8 @@ class DcKosRb
          [255, 0, 0]
       when 'magenta'
          [255, 0, 255]
+      when 'ltblue'
+         [135, 206, 250]
       when 'yellow'
          [255, 255, 0]
       when 'ltgreen'
