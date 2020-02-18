@@ -8,19 +8,6 @@
 -txt,432,52,red:^
 -txt,280,64,red:and presentation tools!
 
-= Development page
--txtblock,30,30,610,400
--code,30,30,ruby:class HelloWorld
-  idx += @pages.length # Past last page
-  def initialize(name)
-    @name = name
-  end
-
-  def hello
-    puts "Hello, #{@name}!"
-  end
-end
-
 = Resetting timer internally...
 -resettimer
 
@@ -35,7 +22,6 @@ end
 -img,60,260: /rd/yuji_avatar.png
 
 = Adelaide, Australia
--img,140,40: /rd/adelaide_and_taipei.png
 -img512,30,108,424,420: /rd/AdelaideTaipei_orig659x652.png
 -wait:
 -img512,30,94,452,420: /rd/AdelaideMelbourne_orig655x608.png
