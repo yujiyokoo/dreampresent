@@ -22,9 +22,10 @@
 -img,60,260: /rd/yuji_avatar.png
 
 = Adelaide, Australia
--img512,30,108,424,420: /rd/AdelaideTaipei_orig659x652.png
 -wait:
--img512,30,94,452,420: /rd/AdelaideMelbourne_orig655x608.png
+-img512,94,30,452,420: /rd/AdelaideMelbourne_orig655x608.png
+-wait:
+-img512,108,30,424,420: /rd/AdelaideTaipei_orig659x652.png
 
 = Table of Contents
 -txt,40,40: - About this app
@@ -72,6 +73,21 @@ end
 
 HelloWorld.new.run
 
+= Example source
+-txtblock,30,30,580,400
+-txt,30,30,white: = Example Slide
+ -bkg: /rd/bg_dark.png
+ -txt,60,30,white,yes:Example text with
+ black background.
+ -txt,60,100,yellow: Here's yellow text
+ -hline,60,150,300,5:red
+ -img,400,30: /rd/Dreamcast.png
+ -txtblock,60,180,510,400
+ -code,60,180,ruby:class HelloWorld
+   def run
+     puts "Hello, world!"
+   end
+ end
 
 = What is Dreamcast?
 -wait:
@@ -101,9 +117,7 @@ HelloWorld.new.run
 
 = Why Dreamcast?
 -wait:
--txt,30,60: - Why not?
--wait:
--txt,30,90: - 2018 was the 20th anniversary year
+-txt,30,60: - 2018 was the 20th anniversary year
  - I had my 2nd Dreamcast unit working from 2002
 -wait:
 -txt,30,180: - Dreamcast is still loved by many! It's awesome.
@@ -338,34 +352,38 @@ functions
 = Bitshift and Bitwise AND
 -txt,30,60:Bitshift shifts bits in a binary number
 -wait:
--txt,30,90:0101 << 1 -> 1010 (decimal 5 to decimal 10)
+-txt,30,90:"<<" shifts to left, ">>" shifts to right
 -wait:
--txt,30,120:0100 >> 2 -> 0001 (decimal 4 to decimal 1)
+-txt,30,120:0001 << 1 = 0010
 -wait:
--txt,30,210:AND takes 2 bits and returns 1 if both are 1
+-txt,30,150:1101 << 1 = 1010
 -wait:
--txt,30,240:1 & 1 -> 1
+-txt,30,180:0101 >> 2 = 0001
 -wait:
--txt,30,270:0 & 1 -> 0
+-txt,30,240:AND takes 2 bits and returns 1 if both are 1
 -wait:
--txt,30,300:1 & 0 -> 0
+-txt,30,270:1 & 1 = 1
 -wait:
--txt,30,330:0 & 0 -> 0
+-txt,30,300:0 & 1 = 0
+-wait:
+-txt,30,330:1 & 0 = 0
+-wait:
+-txt,30,360:0 & 0 = 0
 
 = Bitshift and Bitwise AND
 -txt,30,60:Bitwise AND can handle many digits together
 -wait:
--txt,30,90:0101 & 0110 -> 0100
+-txt,30,90:0101 & 0110 = 0100
 -wait:
--txt,30,120:1111 & 0110 -> 0110
+-txt,30,120:1111 & 0110 = 0110
 -wait:
 -txt,30,210:It can check a specific digit is on
 -wait:
--txt,30,240:0110 & 0001 -> 0000
+-txt,30,240:0110 & 0001 = 0000
 -wait:
--txt,30,270:1111 & 0001 -> 0001
+-txt,30,270:1111 & 0001 = 0001
 -wait:
--txt,30,300:1001 & 0001 -> 0001
+-txt,30,300:1001 & 0001 = 0001
 
 = Integration with C
 -txt,30,30:Example: Reading controller buttons
