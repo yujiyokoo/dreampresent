@@ -6,8 +6,6 @@ I developed this for **RubyConf TW 2019** and ran my presentation on it. Later i
 
 [![#Developing your Dreamcast games with mruby - Yuji Yokoo (RubyConf AU 2020)](https://img.youtube.com/vi/ni-1x5Esa_o/0.jpg)](https://www.youtube.com/watch?v=ni-1x5Esa_o)
 
-The presentation content example can be found under `romdisk/` directory with images.
-
 ## Usage
 
 You can use `A` or `START` to move forward, and use `B` to go back to the previous page.
@@ -24,6 +22,8 @@ If you press `Right` on the D-pad, you move the time forward by 5 minutes, and b
 **Dreampresent** uses [KallistiOS](http://gamedev.allusion.net/softprj/kos/) (KOS) and [mruby](https://mruby.org/) as dependencies. For building this program you have two options: 
 * Using a working KallistiOS setup;
 * Use the provided Docker image below.
+
+The presentation content example can be found under `romdisk/` directory with images.
 
 ### Using your KallistiOS environment
 
