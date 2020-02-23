@@ -1,11 +1,10 @@
-
-# dreampresent: The Dreamcast Presentation Tool
+# Dreampresent: The Dreamcast Presentation Tool
 
 This is a presentation tool that runs on **Sega Dreamcast**.  It was written in **Ruby** (instead of **C/C++** which is usually the case for Sega Dreamcast programs!).
 
 I developed this for **RubyConf TW 2019** and ran my presentation on it. Later it was updated for **RubyConf AU 2020** as you may see below.
 
-`[![#Developing your Dreamcast games with mruby - Yuji Yokoo (RubyConf AU 2020)](https://img.youtube.com/vi/ni-1x5Esa_o/0.jpg)](https://www.youtube.com/watch?v=ni-1x5Esa_o)`
+[![#Developing your Dreamcast games with mruby - Yuji Yokoo (RubyConf AU 2020)](https://img.youtube.com/vi/ni-1x5Esa_o/0.jpg)](https://www.youtube.com/watch?v=ni-1x5Esa_o)
 
 The presentation content example can be found under `romdisk/` directory with images.
 
