@@ -1,42 +1,72 @@
-# dreampresent
 
-Dreamcast Presentation Tool.
+# dreampresent: The Dreamcast Presentation Tool
 
-This is a presentation tool that runs on Dreamcast.
+This is a presentation tool that runs on **Sega Dreamcast**.  It was written in **Ruby** (instead of **C/C++** which is usually the case for Sega Dreamcast programs!).
 
-I developed this for RubyconfTW 2019 and ran my presentation on it.
+I developed this for **RubyConf TW 2019** and ran my presentation on it. Later it was updated for **RubyConf AU 2020** as you may see below.
 
-The presentation content example can be found under romdisk/ directory with images.
+`[![#Developing your Dreamcast games with mruby - Yuji Yokoo (RubyConf AU 2020)](https://img.youtube.com/vi/ni-1x5Esa_o/0.jpg)](https://www.youtube.com/watch?v=ni-1x5Esa_o)`
 
-If you build this with mruby-dreamcast and run it, you will boot into the presentation.
+The presentation content example can be found under `romdisk/` directory with images.
 
-You can use A or START to move forward, and use B to go back to the previous page.
+## Usage
 
-Hold A + B + Start to quit
+You can use `A` or `START` to move forward, and use `B` to go back to the previous page.
+
+Hold `A + B + Start` to quit.
 
 The bottom of the screen shows the page progress and time progress (blue dreamcast swirl for page, red mruby for time).
 
-The time is currently hardcoded to 35 minutes.
+The time is currently hardcoded to `35` minutes.
 
-If you press Right on the D-pad, you move the time forward by 5 minutes, and back by 5 minutes if you press Left.
+If you press `Right` on the D-pad, you move the time forward by 5 minutes, and back by 5 minutes if you press `Left`.
 
 ## Building
+**Dreampresent** uses [KallistiOS](http://gamedev.allusion.net/softprj/kos/) (KOS) and [mruby](https://mruby.org/) as dependencies. For building this program you have two options: 
+* Using a working KallistiOS setup;
+* Use the provided Docker image below.
 
-To build, you need to pull the docker image 'yujiyokoo/mruby-kos-dc'.
+### Using your KallistiOS environment
 
-----
-> docker pull yujiyokoo/mruby-kos-dc
-----
+If you have a working [KallistiOS](http://gamedev.allusion.net/softprj/kos/) environment, you will have to install the `rake` and `bison` packages. If you are using [DreamSDK](https://dreamsdk.org), you will have to install the [RubyInstaller](https://rubyinstaller.org/) package separately. `rake` should be available in the `PATH` environment variable.
+
+Install  `mruby`:
+
+	cd /opt
+	git clone https://github.com/mruby/mruby.git
+	cd /opt/mruby
+	cp examples/targets/build_config_dreamcast_shelf.rb build_config.rb
+	make
+
+These commands will produces all the necessary files for using mruby on Sega Dreamcast. After that, just navigate to the `dreampresent` directory then enter `make`. This will produces the `dreampresent.elf` file.
+
+**Note:** You may consult [this page](https://dreamcast.wiki/Using_Ruby_for_Sega_Dreamcast_development) for reference.
+
+### Using Docker image
+
+To build, you need to pull the Docker image `yujiyokoo/mruby-kos-dc`.
+
+	docker pull yujiyokoo/mruby-kos-dc
 
 Then you can build the binary with:
 
-----
-> docker run -i -t -v $(pwd):/mnt yujiyokoo/mruby-kos-dc bash -c 'cd /mnt && . /opt/toolchains/dc/kos/environ.sh && make'
-----
+	docker run -i -t -v $(pwd):/mnt yujiyokoo/mruby-kos-dc bash -c 'cd /mnt && . /opt/toolchains/dc/kos/environ.sh && make'
 
-If you have lxdream installed, you can run it with:
+## Executing
 
-----
-> lxdream dreampresent.elf
-----
+### Lxdream
 
+If you have the **Lxdream** Sega Dreamcast emulator installed, you can run it with:
+
+	lxdream dreampresent.elf
+
+### Making a bootable image
+
+If you want to try this software in your real Dreamcast and/or in an emulator, you may create a **Padus DiscJuggler** (`cdi`) image. For example, if you are using [DreamSDK](https://dreamsdk.org), you may do the following:
+
+	make dist
+	elf2bin dreampresent.elf
+	scramble dreampresent.bin cd_root/1ST_READ.BIN
+	makedisc dreampresent.cdi cd_root
+
+This will produces the `dreampresent.cdi` image file that you may burn onto a CD-R or use in a Dreamcast Emulator.
