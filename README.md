@@ -1,3 +1,4 @@
+
 # Dreampresent: The Dreamcast Presentation Tool
 
 This is a presentation tool that runs on **Sega Dreamcast**.  It was written in **Ruby** (instead of **C/C++** which is usually the case for Sega Dreamcast programs!).
@@ -23,11 +24,11 @@ If you press `Right` on the D-pad, you move the time forward by 5 minutes, and b
 * Using a working KallistiOS setup;
 * Use the provided Docker image below.
 
-The presentation content example can be found under `romdisk/` directory with images.
+The presentation content can be found under `romdisk/` directory, it's embedded when building the program.
 
 ### Using your KallistiOS environment
 
-If you have a working [KallistiOS](http://gamedev.allusion.net/softprj/kos/) environment, you will have to install the `rake` and `bison` packages. If you are using [DreamSDK](https://dreamsdk.org), you will have to install the [RubyInstaller](https://rubyinstaller.org/) package separately. `rake` should be available in the `PATH` environment variable.
+If you have a working [KallistiOS](http://gamedev.allusion.net/softprj/kos/) environment, you will have to install the `rake` and `bison` packages (e.g. using `apt`, `brew` or `pacman`). If you are using [DreamSDK](https://dreamsdk.org), you will have to install the [RubyInstaller](https://rubyinstaller.org/) package separately, in that case, `rake` should be available in the `PATH` environment variable.
 
 Install  `mruby`:
 
@@ -37,7 +38,7 @@ Install  `mruby`:
 	cp examples/targets/build_config_dreamcast_shelf.rb build_config.rb
 	make
 
-These commands will produces all the necessary files for using mruby on Sega Dreamcast. After that, just navigate to the `dreampresent` directory then enter `make`. This will produces the `dreampresent.elf` file.
+These commands will produces all the necessary files for using **mruby** on Sega Dreamcast. After that, just navigate to the `dreampresent` directory then enter `make`. This will produces the `dreampresent.elf` file.
 
 **Note:** You may consult [this page](https://dreamcast.wiki/Using_Ruby_for_Sega_Dreamcast_development) for reference.
 
