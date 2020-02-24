@@ -2,4 +2,6 @@
 *.elf
 /src/dreampresent.c
 romdisk.img
-
+dreampresent.bin
+dreampresent.cdi
+cd_root/1ST_READ.BIN
