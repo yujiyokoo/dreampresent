@@ -263,12 +263,12 @@ class PageBaseContent
   end
 
   def render_timer_progress(dc_kos, start_time, time_adjustment)
-    puts "#################### start_time: #{start_time}, adj: #{time_adjustment}, now: #{Time.now}"
-    DURATION = 35 * 60 # 35 mins
+    DURATION = 20 * 60 # 20 mins
     PROGRESS_LEN = 640 - 32
     PROGRESS_Y_POS = 440
 
     pos_x = ((Time.now.to_i - start_time.to_i + time_adjustment) / DURATION * PROGRESS_LEN).to_i
+    puts "#################### start_time: #{start_time}, adj: #{time_adjustment}, now: #{Time.now}, pos_x: #{pos_x}"
     pos_x = PROGRESS_LEN if pos_x > PROGRESS_LEN
     pos_x = 0 if pos_x < 0
 
