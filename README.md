@@ -35,8 +35,7 @@ Install  `mruby`:
 	cd /opt
 	git clone https://github.com/mruby/mruby.git
 	cd /opt/mruby
-	cp examples/targets/build_config_dreamcast_shelf.rb build_config.rb
-	make
+	make MRUBY_CONFIG=dreamcast_shelf
 
 These commands will produces all the necessary files for using **mruby** on Sega Dreamcast. After that, just navigate to the `dreampresent` directory then enter `make`. This will produces the `dreampresent.elf` file.
 
