@@ -1,4 +1,4 @@
-# mrbtris: Sample game for Sega Dreamcast written in Ruby
+# dreampresent: a simple presentation tool for Sega Dreamcast written in Ruby
 
 PROJECT_NAME = dreampresent
 
