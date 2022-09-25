@@ -2,6 +2,7 @@
 #include <kos.h>
 #include <kos/img.h>
 #include <mruby.h>
+#include <mruby/internal.h>
 #include <mruby/data.h>
 #include <mruby/string.h>
 #include <mruby/error.h>

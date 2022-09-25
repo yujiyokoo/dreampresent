@@ -20,11 +20,14 @@ The time is currently hardcoded to `35` minutes.
 If you press `Right` on the D-pad, you move the time forward by 5 minutes, and back by 5 minutes if you press `Left`.
 
 ## Building
+
 **Dreampresent** uses [KallistiOS](http://gamedev.allusion.net/softprj/kos/) (KOS) and [mruby](https://mruby.org/) as dependencies. For building this program you have two options: 
 * Using a working KallistiOS setup;
 * Use the provided Docker image below.
 
 The presentation content can be found under `romdisk/` directory, it's embedded when building the program.
+
+**Note:** You will need the `libpng` KallistiOS Ports installed for building this program.
 
 ### Using your KallistiOS environment
 
@@ -35,8 +38,7 @@ Install  `mruby`:
 	cd /opt
 	git clone https://github.com/mruby/mruby.git
 	cd /opt/mruby
-	cp examples/targets/build_config_dreamcast_shelf.rb build_config.rb
-	make
+	make MRUBY_CONFIG=dreamcast_shelf
 
 These commands will produces all the necessary files for using **mruby** on Sega Dreamcast. After that, just navigate to the `dreampresent` directory then enter `make`. This will produces the `dreampresent.elf` file.
 
@@ -65,8 +67,17 @@ If you have the **Lxdream** Sega Dreamcast emulator installed, you can run it wi
 If you want to try this software in your real Dreamcast and/or in an emulator, you may create a **Padus DiscJuggler** (`cdi`) image. For example, if you are using [DreamSDK](https://dreamsdk.org), you may do the following:
 
 	make dist
-	elf2bin dreampresent.elf
-	scramble dreampresent.bin cd_root/1ST_READ.BIN
 	makedisc dreampresent.cdi cd_root
 
 This will produces the `dreampresent.cdi` image file that you may burn onto a CD-R or use in a Dreamcast Emulator.
+
+### Using dcload/dc-tool (part of KallistiOS)
+
+If you have a [Coders Cable](https://dreamcast.wiki/Coder%27s_cable) or a [Broadband Adapter](https://dreamcast.wiki/Broadband_adapter) (BBA) / [LAN Adapter](https://dreamcast.wiki/LAN_adapter), you could also the `dcload` program (part of **KallistiOS**) to load it directly on the Sega Dreamcast. It should load as a normal Sega Dreamcast program.
+
+To do that, you may enter the following:
+
+	make run
+
+This will execute `dc-tool` using the `dreampresent.elf` binary file as target.
+
