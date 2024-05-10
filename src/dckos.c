@@ -17,7 +17,7 @@
 
 int PX_PER_LINE = 640;
 
-int _is_in_screen(x, y) {
+int _is_in_screen(int x, int y) {
   return x >= 0 && x < PX_PER_LINE && y >= 0 && y < 480;
 }
 
@@ -291,8 +291,8 @@ mrb_value next_video_mode(mrb_state *mrb, mrb_value self) {
 
 void print_exception(mrb_state *mrb) {
   if(mrb->exc) {
-    mrb_value backtrace = mrb_get_backtrace(mrb);
-    puts(mrb_str_to_cstr(mrb, mrb_inspect(mrb, backtrace)));
+    // mrb_get_backtrace is not available any more... would this work?
+    mrb_print_backtrace(mrb);
 
     mrb_value obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
     fwrite(RSTRING_PTR(obj), RSTRING_LEN(obj), 1, stdout);

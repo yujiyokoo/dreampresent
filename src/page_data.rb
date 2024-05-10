@@ -256,7 +256,7 @@ class PageBaseContent
       if page_count <= 1
         0
       else
-        (page_index / (page_count - 1) * PAGES_BAR_LEN).to_i
+        ((page_index * PAGES_BAR_LEN) / (page_count - 1) ).to_i
       end
 
     dc_kos.render_png("/rd/swirl_blue_32x28.png", pos_x, PAGES_Y_POS)
@@ -267,7 +267,7 @@ class PageBaseContent
     PROGRESS_LEN = 640 - 32
     PROGRESS_Y_POS = 440
 
-    pos_x = ((Time.now.to_i - start_time.to_i + time_adjustment) / DURATION * PROGRESS_LEN).to_i
+    pos_x = (((Time.now.to_i - start_time.to_i + time_adjustment) * PROGRESS_LEN) / DURATION ).to_i
     puts "#################### start_time: #{start_time}, adj: #{time_adjustment}, now: #{Time.now}, pos_x: #{pos_x}"
     pos_x = PROGRESS_LEN if pos_x > PROGRESS_LEN
     pos_x = 0 if pos_x < 0
