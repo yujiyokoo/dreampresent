@@ -1,5 +1,21 @@
 TARGET = dreampresent.elf
 
+TARGET_BIN = dreampresent.bin
+
+FIRST_READ_BIN = 1ST_READ.BIN
+
+ISO_IMAGE = dreampresent.iso
+
+MKISOFS = genisoimage
+
+MKDCDISC = /opt/mkdcdisc/bin/mkdcdisc
+
+CDI_IMAGE = dreampresent.cdi
+
+AUTHOR = "Yuji Yokoo"
+
+GAME_NAME = Dreampresent
+
 OBJS = src/dreampresent.o src/main.o romdisk.o src/dckos.o
 
 # order here is important!
@@ -13,7 +29,7 @@ MRB_ROOT = /opt/mruby
 
 CFLAGS = -I$(MRB_ROOT)/include/ -L$(MRB_ROOT)/build/dreamcast/lib/
 
-all: rm-elf $(TARGET)
+all: rm-elf $(CDI_IMAGE)
 
 include $(KOS_BASE)/Makefile.rules
 
@@ -35,3 +51,17 @@ run: $(TARGET)
 dist:
 	rm -f $(OBJS) romdisk.o romdisk.img
 	$(KOS_STRIP) $(TARGET)
+
+$(TARGET_BIN): $(TARGET)
+	sh-elf-objcopy -R .stack -O binary $(TARGET) $(TARGET_BIN)
+
+$(FIRST_READ_BIN): $(TARGET_BIN)
+	$(KOS_BASE)/utils/scramble/scramble $(TARGET_BIN) $(FIRST_READ_BIN)
+
+$(ISO_IMAGE): $(FIRST_READ_BIN)
+	mkdir -p selfboot
+	cp IP.BIN $(FIRST_READ_BIN) selfboot
+	$(MKISOFS) -C 0,11702 -V dreampresent -G IP.BIN -r -J -l -o $(ISO_IMAGE) selfboot/
+
+$(CDI_IMAGE): $(TARGET)
+	$(MKDCDISC) -e $(TARGET) -a $(AUTHOR) -n $(GAME_NAME) -o $(CDI_IMAGE)
