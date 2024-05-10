@@ -1,4 +1,5 @@
 #include <kos.h>
+#include <dc/sound/sound.h>
 #include <mruby.h>
 #include <mruby/irep.h>
 #include "dckos.h"
@@ -25,6 +26,7 @@ extern const uint8_t dreampresent_bytecode[]; // compiled ruby code
 int main(int argc, char **argv) {
     vid_set_mode(DM_640x480_VGA, PM_RGB565);
     //vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565);
+    snd_init();
 
     mrb_state *mrb = mrb_open();
     if (!mrb) { return 1; }

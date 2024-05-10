@@ -41,7 +41,7 @@ $(TARGET): $(OBJS) $(MRB_BYTECODE)
 	kos-cc $(CFLAGS) -o $(TARGET) $(OBJS) -lmruby -lm -lpng -lkosutils -lz
 
 $(MRB_BYTECODE): src/dreampresent.rb
-	$(MRB_ROOT)/bin/mrbc -g -Bdreampresent_bytecode -o src/dreampresent.c $(MRB_SOURCES)
+	$(MRB_ROOT)/bin/mrbc -g -Bdreampresent_bytecode -o $(MRB_BYTECODE) $(MRB_SOURCES)
 
 run: $(TARGET)
 	$(KOS_LOADER) $(TARGET)

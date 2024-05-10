@@ -300,6 +300,14 @@ void print_exception(mrb_state *mrb) {
   }
 }
 
+static mrb_value play_test_sound(mrb_state *mrb, mrb_value self) {
+  // TODO: do this in init
+  printf("---- loading test.wav\n");
+  sfxhnd_t test_wav = snd_sfx_load("/rd/test.wav");
+  snd_sfx_play(test_wav, 255, 128);
+  return mrb_nil_value();
+}
+
 void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "read_whole_txt_file", read_whole_txt_file, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "draw_str", draw_str, MRB_ARGS_REQ(7));
@@ -317,5 +325,5 @@ void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "draw_horizontal_line", draw_horizontal_line, MRB_ARGS_REQ(6));
   mrb_define_module_function(mrb, module, "draw_vertical_line", draw_vertical_line, MRB_ARGS_REQ(6));
   mrb_define_module_function(mrb, module, "next_video_mode", next_video_mode, MRB_ARGS_NONE());
-
+  mrb_define_module_function(mrb, module, "play_test_sound", play_test_sound, MRB_ARGS_NONE());
 }

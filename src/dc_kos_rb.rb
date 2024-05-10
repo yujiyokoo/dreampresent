@@ -85,7 +85,10 @@ class DcKosRb
       return SWITCH_VIDEO_MODE if switch_video_mode_combination?(previous_state, button_state)
 
       # press STRAT or A to go forward
-      return NEXT_PAGE if start_or_a_pressed?(previous_state, button_state)
+      if start_or_a_pressed?(previous_state, button_state)
+        play_test_sound
+        return NEXT_PAGE
+      end
 
       # press B to go back
       return PREVIOUS_PAGE if b_pressed?(previous_state, button_state)
