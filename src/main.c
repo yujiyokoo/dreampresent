@@ -19,8 +19,6 @@ KOS_INIT_FLAGS(INIT_DEFAULT | INIT_MALLOCSTATS);
 
 /* You can safely remove this line if you don't use a ROMDISK */
 extern uint8 romdisk[];
-/* And specify a romdisk, if you want one (or leave it out) */
-KOS_INIT_ROMDISK(romdisk);
 
 extern const uint8_t dreampresent_bytecode[]; // compiled ruby code
 
