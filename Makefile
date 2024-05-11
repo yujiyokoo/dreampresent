@@ -57,4 +57,4 @@ $(FIRST_READ_BIN): $(TARGET_BIN)
 	$(KOS_BASE)/utils/scramble/scramble $(TARGET_BIN) $(FIRST_READ_BIN)
 
 $(CDI_IMAGE): $(TARGET)
-	$(MKDCDISC) -e $(TARGET) -a $(AUTHOR) -n $(GAME_NAME) -o $(CDI_IMAGE)
+	$(MKDCDISC) -e $(TARGET) -N -a $(AUTHOR) -n $(GAME_NAME) -o $(CDI_IMAGE)
