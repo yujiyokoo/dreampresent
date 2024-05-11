@@ -80,10 +80,10 @@ mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
 }
 
 mrb_value check_btn(mrb_state *mrb, mrb_value self, uint16 target) {
-  struct mrb_int state;
+  mrb_int state;
   mrb_get_args(mrb, "i", &state);
 
-  return mrb_bool_value(mrb_fixnum(state) & target);
+  return mrb_bool_value(state & target);
 }
 
 mrb_value btn_start(mrb_state *mrb, mrb_value self) {
@@ -314,11 +314,15 @@ void print_exception(mrb_state *mrb) {
   }
 }
 
+sfxhnd_t sound_effects[1];
+
+void load_sound_effects(void) {
+  sound_effects[0] = snd_sfx_load("/rd/test.wav");
+}
+
 static mrb_value play_test_sound(mrb_state *mrb, mrb_value self) {
   // TODO: do this in init
-  printf("---- loading test.wav\n");
-  sfxhnd_t test_wav = snd_sfx_load("/rd/test.wav");
-  snd_sfx_play(test_wav, 255, 128);
+  snd_sfx_play(sound_effects[0], 255, 128);
   return mrb_nil_value();
 }
 

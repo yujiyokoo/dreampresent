@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
     vid_set_mode(DM_640x480_VGA, PM_RGB565);
     //vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565);
     snd_init();
+    load_sound_effects();
 
     mrb_state *mrb = mrb_open();
     if (!mrb) { return 1; }
