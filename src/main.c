@@ -23,10 +23,60 @@ extern uint8 romdisk[];
 
 extern const uint8_t dreampresent_bytecode[]; // compiled ruby code
 
+void print_device_info(int i) {
+    int PX_PER_LINE = 640;
+    maple_device_t *dev;
+    for(int i = 0; i < 4 ; i ++) {
+        // for(int j = 0; j < 4; j++) {
+            int j = 0;
+            dev = maple_enum_type(i, 0x1000000);
+            if(dev) {
+                int x = 10;
+                int y = (j) * 24;
+                char content[1000];
+                sprintf(content, "Device at %d", j);
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                y += 24;
+                sprintf(content, "%d, %d", i, 0);
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                y += 24;
+                sprintf(content, "%s", dev->info.product_name);
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                y += 24;
+                sprintf(content, "%lx", dev->info.functions);
+  bfont_draw_str_ex(vram_s + x + (y * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+
+                maple_device_t *fcontroller;
+                for(int i = 0; i < 4; i++) {
+                    fcontroller = maple_enum_type(0, MAPLE_FUNC_CONTROLLER);
+                    sprintf(content, "Controller: %s", fcontroller->info.product_name);
+                    bfont_draw_str_ex(vram_s + 80 + (200 * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                    // TODO: this limits the support to Dreamcast Fishing Controller. Maybe there are other fishing controllers?
+                    // char* product_name = "Dreamcast Fishing Controller";
+                    char* PRODUCT_NAME = "Dreamcast Controller";
+                    sprintf(content, "strncmp: %d", strncmp(fcontroller->info.product_name, PRODUCT_NAME, strlen(PRODUCT_NAME)));
+                    bfont_draw_str_ex(vram_s + 80 + (230 * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                    if(fcontroller && strncmp(fcontroller->info.product_name, PRODUCT_NAME, strlen(PRODUCT_NAME)) == 0) {
+                        while(1) {
+                            cont_state_t *state = (cont_state_t *)maple_dev_status(fcontroller);
+                            sprintf(content, "ltrigger: %d, rtrigger: %d, buttons: %ld", state->ltrig, state->rtrig, state->buttons);
+                            bfont_draw_str_ex(vram_s + 80 + (260 * PX_PER_LINE), PX_PER_LINE, 0xFFFF, 0x00000000, (sizeof (uint16)) << 3, 1, content);
+                        }
+                    }
+                }
+            }
+        // }
+    }
+}
+
 int main(int argc, char **argv) {
     vid_set_mode(DM_640x480_VGA, PM_RGB565);
     //vid_set_mode(DM_640x480_NTSC_IL, PM_RGB565);
     snd_init();
+
+    // print_device_info(1);
+
+    // while(1);
 
     mrb_state *mrb = mrb_open();
     if (!mrb) { return 1; }
