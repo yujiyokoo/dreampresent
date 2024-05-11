@@ -75,8 +75,10 @@ class DcKosRb
 
   def next_or_back
     previous_state = @dc_kos::get_button_state
+    previous_fishing_swing_state = @dc_kos::get_fishing_controller_swing_state
     while true do
       button_state = @dc_kos::get_button_state
+      fishing_swing_state = @dc_kos::get_fishing_controller_swing_state
 
       # NOTE order is important here.
 
@@ -84,10 +86,10 @@ class DcKosRb
 
       return SWITCH_VIDEO_MODE if switch_video_mode_combination?(previous_state, button_state)
 
-      # press STRAT or A to go forward
-      if start_or_a_pressed?(previous_state, button_state)
+      # press STRAT or A to go forward (or swing the fishing controller)
+      if start_or_a_pressed?(previous_state, button_state) || (fishing_swing_state > 200 && previous_fishing_swing_state <= 200)
         play_test_sound
-        return NEXT_PAGE
+          return NEXT_PAGE
       end
 
       # press B to go back
@@ -98,6 +100,7 @@ class DcKosRb
       return REW if left_pressed?(previous_state, button_state)
 
       previous_state = button_state
+      previous_fishing_swing_state = fishing_swing_state
     end
   end
 

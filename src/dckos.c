@@ -55,6 +55,20 @@ static mrb_value read_whole_txt_file(mrb_state *mrb, mrb_value self) {
   return whole_str_mrb;
 }
 
+static mrb_value get_fishing_controller_swing_state(mrb_state *mrb, mrb_value self) {
+  maple_device_t *fcontroller;
+  for(int i = 0; i < 4; i++) {
+    fcontroller = maple_enum_type(i, MAPLE_FUNC_CONTROLLER);
+    char* product_name = "Dreamcast Fishing Controller";
+    // TODO: this limits the support to Dreamcast Fishing Controller. Maybe there are other fishing controllers?
+    if(fcontroller && strncmp(fcontroller->info.product_name, product_name, strlen(product_name)) == 0) {
+      cont_state_t *state = (cont_state_t *)maple_dev_status(fcontroller);
+      return mrb_fixnum_value(state->ltrig);
+    }
+  }
+  return mrb_fixnum_value(0);
+}
+
 mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
   maple_device_t *cont1;
   cont_state_t *state;
@@ -62,11 +76,11 @@ mrb_value get_button_state(mrb_state *mrb, mrb_value self) {
     state = (cont_state_t *)maple_dev_status(cont1);
     return mrb_fixnum_value(state->buttons);
   }
-  return mrb_nil_value();
+  return mrb_fixnum_value(0);
 }
 
 mrb_value check_btn(mrb_state *mrb, mrb_value self, uint16 target) {
-  struct mrb_value state;
+  struct mrb_int state;
   mrb_get_args(mrb, "i", &state);
 
   return mrb_bool_value(mrb_fixnum(state) & target);
@@ -315,6 +329,7 @@ void define_module_functions(mrb_state *mrb, struct RClass *module) {
   mrb_define_module_function(mrb, module, "render_png", render_png, MRB_ARGS_REQ(3));
   mrb_define_module_function(mrb, module, "pvr_initialise", pvr_initialise, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "get_button_state", get_button_state, MRB_ARGS_NONE());
+  mrb_define_module_function(mrb, module, "get_fishing_controller_swing_state", get_fishing_controller_swing_state, MRB_ARGS_NONE());
   mrb_define_module_function(mrb, module, "btn_start?", btn_start, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_a?", btn_a, MRB_ARGS_REQ(1));
   mrb_define_module_function(mrb, module, "btn_b?", btn_b, MRB_ARGS_REQ(1));
