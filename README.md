@@ -1,3 +1,6 @@
+# This is a legacy Dreamcast-only version
+
+The new cross-platform version that runs on Dreamcast and Wii is under development at [dreampresent-wii](https://github.com/yujiyokoo/dreampresent-wii).
 
 # Dreampresent: The Dreamcast Presentation Tool
 
@@ -20,7 +23,7 @@ The time is currently hardcoded to `35` minutes.
 If you press `Right` on the D-pad, you move the time forward by 5 minutes, and back by 5 minutes if you press `Left`.
 
 ## Building
-**Dreampresent** uses [KallistiOS](http://gamedev.allusion.net/softprj/kos/) (KOS) and [mruby](https://mruby.org/) as dependencies. For building this program you have two options: 
+**Dreampresent** uses [KallistiOS](http://gamedev.allusion.net/softprj/kos/) (KOS) and [mruby](https://mruby.org/) as dependencies. For building this program you have two options:
 * Using a working KallistiOS setup;
 * Use the provided Docker image below.
 
